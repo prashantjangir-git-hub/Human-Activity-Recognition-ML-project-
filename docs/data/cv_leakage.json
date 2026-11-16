@@ -1,0 +1,20 @@
+[
+ {
+  "Model": "Logistic Regression",
+  "Random window K-fold": 0.9836,
+  "Subject-grouped K-fold": 0.9339,
+  "Inflation": 0.0497
+ },
+ {
+  "Model": "SVM (RBF)",
+  "Random window K-fold": 0.9841,
+  "Subject-grouped K-fold": 0.9322,
+  "Inflation": 0.0519
+ },
+ {
+  "Model": "k-Nearest Neighbours",
+  "Random window K-fold": 0.9514,
+  "Subject-grouped K-fold": 0.8729,
+  "Inflation": 0.0786
+ }
+]

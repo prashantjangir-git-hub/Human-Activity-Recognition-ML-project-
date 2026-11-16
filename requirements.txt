@@ -1,0 +1,8 @@
+# Versions the results were produced with (tested on Python 3.13 and 3.14, identical results). Needs Python 3.11+ (pandas 3 does not support 3.10).
+# Nearby versions should give the same numbers.
+scikit-learn==1.9.1
+pandas==3.0.5
+numpy==2.5.3
+matplotlib==3.11.2
+seaborn==0.13.2
+jupyter

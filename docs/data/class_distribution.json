@@ -1,0 +1,26 @@
+{
+ "labels": [
+  "WALKING",
+  "WALKING_UPSTAIRS",
+  "WALKING_DOWNSTAIRS",
+  "SITTING",
+  "STANDING",
+  "LAYING"
+ ],
+ "train_counts": [
+  1226,
+  1073,
+  986,
+  1286,
+  1374,
+  1407
+ ],
+ "test_counts": [
+  496,
+  471,
+  420,
+  491,
+  532,
+  537
+ ]
+}

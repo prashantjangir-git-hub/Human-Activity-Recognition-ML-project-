@@ -1,0 +1,1927 @@
+{
+ "features": [
+  "tBodyAcc-std()-X",
+  "tBodyAccMag-mean()",
+  "tGravityAcc-mean()-X",
+  "tGravityAcc-mean()-Y",
+  "tGravityAcc-mean()-Z",
+  "tBodyAccJerk-std()-Z",
+  "tBodyGyro-std()-Y",
+  "fBodyAccMag-meanFreq()"
+ ],
+ "classes": [
+  "LAYING",
+  "SITTING",
+  "STANDING",
+  "WALKING",
+  "WALKING_DOWNSTAIRS",
+  "WALKING_UPSTAIRS"
+ ],
+ "mean": [
+  -0.605438,
+  -0.543884,
+  0.664122,
+  0.011006,
+  0.09392,
+  -0.760471,
+  -0.67588,
+  0.073137
+ ],
+ "scale": [
+  0.448704,
+  0.477621,
+  0.516728,
+  0.372212,
+  0.347769,
+  0.287362,
+  0.371312,
+  0.267229
+ ],
+ "coef": [
+  [
+   -0.167854,
+   1.172931,
+   -6.909018,
+   2.49341,
+   -0.10059,
+   -0.755989,
+   -0.671359,
+   0.483583
+  ],
+  [
+   -2.557225,
+   -1.843187,
+   0.748875,
+   2.731367,
+   0.057783,
+   -2.692017,
+   -0.778039,
+   0.33815
+  ],
+  [
+   -3.065402,
+   -2.705168,
+   4.052761,
+   -3.360984,
+   -0.090373,
+   -0.858668,
+   -2.24809,
+   0.1247
+  ],
+  [
+   -2.937672,
+   0.96042,
+   4.771662,
+   -0.993685,
+   0.54061,
+   2.465504,
+   1.721765,
+   1.524153
+  ],
+  [
+   9.076715,
+   -3.411913,
+   0.214927,
+   1.781893,
+   0.670388,
+   3.277131,
+   0.907507,
+   -1.673474
+  ],
+  [
+   -0.348562,
+   5.826917,
+   -2.879207,
+   -2.652002,
+   -1.077818,
+   -1.43596,
+   1.068216,
+   -0.797112
+  ]
+ ],
+ "intercept": [
+  1.682773,
+  2.451272,
+  -1.41433,
+  1.15708,
+  -3.162499,
+  -0.714296
+ ],
+ "cv_f1": 0.8804,
+ "test_f1": 0.8419,
+ "presets": {
+  "WALKING": [
+   -0.325,
+   -0.173,
+   0.943,
+   -0.212,
+   -0.035,
+   -0.49,
+   -0.402,
+   0.159
+  ],
+  "WALKING_UPSTAIRS": [
+   -0.234,
+   -0.094,
+   0.891,
+   -0.304,
+   -0.106,
+   -0.657,
+   -0.404,
+   -0.061
+  ],
+  "WALKING_DOWNSTAIRS": [
+   0.143,
+   0.139,
+   0.932,
+   -0.173,
+   -0.029,
+   -0.414,
+   -0.388,
+   0.021
+  ],
+  "SITTING": [
+   -0.993,
+   -0.985,
+   0.926,
+   0.092,
+   0.199,
+   -0.988,
+   -0.982,
+   0.149
+  ],
+  "STANDING": [
+   -0.994,
+   -0.979,
+   0.953,
+   -0.185,
+   0.001,
+   -0.988,
+   -0.983,
+   0.06
+  ],
+  "LAYING": [
+   -0.983,
+   -0.978,
+   -0.358,
+   0.713,
+   0.677,
+   -0.989,
+   -0.976,
+   0.085
+  ]
+ },
+ "ranges": [
+  [
+   -1.0,
+   0.54
+  ],
+  [
+   -1.0,
+   0.49
+  ],
+  [
+   -0.85,
+   0.98
+  ],
+  [
+   -0.45,
+   0.97
+  ],
+  [
+   -0.69,
+   0.97
+  ],
+  [
+   -1.0,
+   0.18
+  ],
+  [
+   -1.0,
+   0.51
+  ],
+  [
+   -0.63,
+   0.75
+  ]
+ ],
+ "windows": [
+  {
+   "row": 240,
+   "subject": 2,
+   "true": "WALKING",
+   "full_model_pred": "WALKING",
+   "error_example": false,
+   "values": [
+    -0.5028,
+    -0.3423,
+    0.8935,
+    -0.3462,
+    0.1463,
+    -0.5706,
+    -0.6226,
+    0.4576
+   ]
+  },
+  {
+   "row": 243,
+   "subject": 2,
+   "true": "WALKING",
+   "full_model_pred": "WALKING",
+   "error_example": false,
+   "values": [
+    -0.2786,
+    -0.1664,
+    0.9026,
+    -0.3485,
+    0.1429,
+    -0.5005,
+    -0.4371,
+    0.6699
+   ]
+  },
+  {
+   "row": 1789,
+   "subject": 13,
+   "true": "WALKING",
+   "full_model_pred": "WALKING",
+   "error_example": false,
+   "values": [
+    -0.3055,
+    -0.0938,
+    0.9349,
+    -0.301,
+    0.0244,
+    -0.5108,
+    -0.4083,
+    0.2663
+   ]
+  },
+  {
+   "row": 2145,
+   "subject": 18,
+   "true": "WALKING",
+   "full_model_pred": "WALKING",
+   "error_example": false,
+   "values": [
+    -0.3556,
+    -0.2675,
+    0.8979,
+    -0.264,
+    -0.2274,
+    -0.5553,
+    -0.4757,
+    0.0419
+   ]
+  },
+  {
+   "row": 552,
+   "subject": 4,
+   "true": "WALKING",
+   "full_model_pred": "WALKING",
+   "error_example": false,
+   "values": [
+    -0.4414,
+    -0.3119,
+    0.9617,
+    -0.0516,
+    0.1041,
+    -0.7899,
+    -0.686,
+    0.3928
+   ]
+  },
+  {
+   "row": 1974,
+   "subject": 18,
+   "true": "WALKING",
+   "full_model_pred": "WALKING",
+   "error_example": false,
+   "values": [
+    -0.3621,
+    -0.2796,
+    0.9462,
+    -0.2487,
+    0.1029,
+    -0.6991,
+    -0.4787,
+    0.1263
+   ]
+  },
+  {
+   "row": 238,
+   "subject": 2,
+   "true": "WALKING",
+   "full_model_pred": "WALKING",
+   "error_example": false,
+   "values": [
+    -0.435,
+    -0.32,
+    0.905,
+    -0.3446,
+    0.1436,
+    -0.64,
+    -0.5462,
+    0.4184
+   ]
+  },
+  {
+   "row": 2132,
+   "subject": 18,
+   "true": "WALKING",
+   "full_model_pred": "WALKING",
+   "error_example": false,
+   "values": [
+    -0.3044,
+    -0.2356,
+    0.9003,
+    -0.2635,
+    -0.2295,
+    -0.5603,
+    -0.4361,
+    0.1353
+   ]
+  },
+  {
+   "row": 1146,
+   "subject": 10,
+   "true": "WALKING",
+   "full_model_pred": "WALKING",
+   "error_example": false,
+   "values": [
+    -0.1212,
+    -0.1001,
+    0.9602,
+    0.0547,
+    0.0772,
+    -0.4056,
+    -0.2159,
+    0.1595
+   ]
+  },
+  {
+   "row": 2498,
+   "subject": 20,
+   "true": "WALKING",
+   "full_model_pred": "WALKING",
+   "error_example": false,
+   "values": [
+    -0.096,
+    0.1524,
+    0.8943,
+    -0.3766,
+    0.0306,
+    -0.4452,
+    0.3933,
+    0.2855
+   ]
+  },
+  {
+   "row": 1144,
+   "subject": 10,
+   "true": "WALKING",
+   "full_model_pred": "WALKING",
+   "error_example": false,
+   "values": [
+    -0.0905,
+    -0.1062,
+    0.9701,
+    0.0442,
+    0.062,
+    -0.6348,
+    -0.2245,
+    0.168
+   ]
+  },
+  {
+   "row": 1460,
+   "subject": 12,
+   "true": "WALKING",
+   "full_model_pred": "WALKING",
+   "error_example": false,
+   "values": [
+    -0.0997,
+    -0.1209,
+    0.9649,
+    -0.1479,
+    -0.0194,
+    -0.6962,
+    -0.3903,
+    0.2449
+   ]
+  },
+  {
+   "row": 2142,
+   "subject": 18,
+   "true": "WALKING",
+   "full_model_pred": "WALKING",
+   "error_example": false,
+   "values": [
+    -0.4857,
+    -0.3524,
+    0.8954,
+    -0.2657,
+    -0.2286,
+    -0.5571,
+    -0.5879,
+    0.1842
+   ]
+  },
+  {
+   "row": 1960,
+   "subject": 18,
+   "true": "WALKING",
+   "full_model_pred": "WALKING",
+   "error_example": false,
+   "values": [
+    -0.4088,
+    -0.3072,
+    0.9437,
+    -0.229,
+    0.0969,
+    -0.7707,
+    -0.4872,
+    0.0843
+   ]
+  },
+  {
+   "row": 2873,
+   "subject": 24,
+   "true": "WALKING",
+   "full_model_pred": "WALKING",
+   "error_example": false,
+   "values": [
+    -0.5064,
+    -0.3272,
+    0.9566,
+    -0.1143,
+    -0.1511,
+    -0.5163,
+    -0.4969,
+    0.1283
+   ]
+  },
+  {
+   "row": 1669,
+   "subject": 13,
+   "true": "WALKING_UPSTAIRS",
+   "full_model_pred": "WALKING_UPSTAIRS",
+   "error_example": false,
+   "values": [
+    -0.4149,
+    -0.2622,
+    0.8385,
+    -0.2939,
+    -0.3448,
+    -0.6614,
+    -0.4232,
+    -0.1927
+   ]
+  },
+  {
+   "row": 296,
+   "subject": 2,
+   "true": "WALKING_UPSTAIRS",
+   "full_model_pred": "WALKING_UPSTAIRS",
+   "error_example": false,
+   "values": [
+    -0.141,
+    -0.0349,
+    0.8244,
+    -0.505,
+    -0.0012,
+    -0.6363,
+    -0.4243,
+    0.3018
+   ]
+  },
+  {
+   "row": 879,
+   "subject": 9,
+   "true": "WALKING_UPSTAIRS",
+   "full_model_pred": "WALKING_UPSTAIRS",
+   "error_example": false,
+   "values": [
+    -0.2674,
+    -0.1554,
+    0.8496,
+    0.0829,
+    -0.3835,
+    -0.5844,
+    -0.1593,
+    0.0501
+   ]
+  },
+  {
+   "row": 1341,
+   "subject": 12,
+   "true": "WALKING_UPSTAIRS",
+   "full_model_pred": "WALKING_UPSTAIRS",
+   "error_example": false,
+   "values": [
+    -0.227,
+    -0.1734,
+    0.9368,
+    -0.2547,
+    -0.1564,
+    -0.5697,
+    -0.5776,
+    0.1084
+   ]
+  },
+  {
+   "row": 2197,
+   "subject": 18,
+   "true": "WALKING_UPSTAIRS",
+   "full_model_pred": "WALKING_UPSTAIRS",
+   "error_example": false,
+   "values": [
+    -0.3638,
+    -0.2725,
+    0.8553,
+    -0.3166,
+    -0.2892,
+    -0.7367,
+    -0.5594,
+    -0.3147
+   ]
+  },
+  {
+   "row": 2389,
+   "subject": 20,
+   "true": "WALKING_UPSTAIRS",
+   "full_model_pred": "WALKING_UPSTAIRS",
+   "error_example": false,
+   "values": [
+    -0.0374,
+    0.097,
+    0.7518,
+    -0.4571,
+    -0.3136,
+    -0.4281,
+    -0.1022,
+    0.2575
+   ]
+  },
+  {
+   "row": 727,
+   "subject": 9,
+   "true": "WALKING_UPSTAIRS",
+   "full_model_pred": "WALKING_UPSTAIRS",
+   "error_example": false,
+   "values": [
+    -0.4908,
+    -0.3367,
+    0.9565,
+    -0.1457,
+    -0.1258,
+    -0.691,
+    -0.5852,
+    0.0951
+   ]
+  },
+  {
+   "row": 1048,
+   "subject": 10,
+   "true": "WALKING_UPSTAIRS",
+   "full_model_pred": "WALKING_UPSTAIRS",
+   "error_example": false,
+   "values": [
+    -0.2207,
+    -0.0361,
+    0.926,
+    -0.292,
+    0.0191,
+    -0.6416,
+    0.0189,
+    0.4178
+   ]
+  },
+  {
+   "row": 283,
+   "subject": 2,
+   "true": "WALKING_UPSTAIRS",
+   "full_model_pred": "WALKING_UPSTAIRS",
+   "error_example": false,
+   "values": [
+    -0.3042,
+    -0.1563,
+    0.8352,
+    -0.4679,
+    0.0487,
+    -0.6751,
+    -0.5898,
+    0.2026
+   ]
+  },
+  {
+   "row": 596,
+   "subject": 4,
+   "true": "WALKING_UPSTAIRS",
+   "full_model_pred": "WALKING_UPSTAIRS",
+   "error_example": false,
+   "values": [
+    -0.1718,
+    -0.1228,
+    0.9583,
+    -0.2241,
+    0.0894,
+    -0.7449,
+    -0.429,
+    -0.1159
+   ]
+  },
+  {
+   "row": 2552,
+   "subject": 20,
+   "true": "WALKING_UPSTAIRS",
+   "full_model_pred": "WALKING_UPSTAIRS",
+   "error_example": false,
+   "values": [
+    -0.1369,
+    0.0388,
+    0.7744,
+    -0.5267,
+    0.0601,
+    -0.5609,
+    -0.0345,
+    0.0084
+   ]
+  },
+  {
+   "row": 1839,
+   "subject": 13,
+   "true": "WALKING_UPSTAIRS",
+   "full_model_pred": "WALKING_UPSTAIRS",
+   "error_example": false,
+   "values": [
+    -0.2088,
+    -0.0713,
+    0.8699,
+    -0.412,
+    -0.006,
+    -0.7865,
+    -0.4892,
+    -0.1379
+   ]
+  },
+  {
+   "row": 2564,
+   "subject": 20,
+   "true": "WALKING_UPSTAIRS",
+   "full_model_pred": "WALKING_UPSTAIRS",
+   "error_example": false,
+   "values": [
+    0.0327,
+    0.102,
+    0.757,
+    -0.524,
+    0.0314,
+    -0.5358,
+    -0.0714,
+    -0.0602
+   ]
+  },
+  {
+   "row": 2033,
+   "subject": 18,
+   "true": "WALKING_UPSTAIRS",
+   "full_model_pred": "WALKING_UPSTAIRS",
+   "error_example": false,
+   "values": [
+    -0.3467,
+    -0.2396,
+    0.9053,
+    -0.325,
+    0.0728,
+    -0.8636,
+    -0.4068,
+    -0.1833
+   ]
+  },
+  {
+   "row": 1345,
+   "subject": 12,
+   "true": "WALKING_UPSTAIRS",
+   "full_model_pred": "WALKING_UPSTAIRS",
+   "error_example": false,
+   "values": [
+    -0.2895,
+    -0.2631,
+    0.9394,
+    -0.2327,
+    -0.1335,
+    -0.6758,
+    -0.506,
+    -0.0378
+   ]
+  },
+  {
+   "row": 1332,
+   "subject": 12,
+   "true": "WALKING_DOWNSTAIRS",
+   "full_model_pred": "WALKING_DOWNSTAIRS",
+   "error_example": false,
+   "values": [
+    0.0256,
+    -0.0163,
+    0.9666,
+    -0.1601,
+    -0.0692,
+    -0.521,
+    -0.5059,
+    -0.057
+   ]
+  },
+  {
+   "row": 582,
+   "subject": 4,
+   "true": "WALKING_DOWNSTAIRS",
+   "full_model_pred": "WALKING_DOWNSTAIRS",
+   "error_example": false,
+   "values": [
+    0.0898,
+    -0.0286,
+    0.9449,
+    -0.0346,
+    0.1329,
+    -0.6091,
+    -0.693,
+    0.1249
+   ]
+  },
+  {
+   "row": 2706,
+   "subject": 24,
+   "true": "WALKING_DOWNSTAIRS",
+   "full_model_pred": "WALKING_DOWNSTAIRS",
+   "error_example": false,
+   "values": [
+    -0.1647,
+    -0.1565,
+    0.959,
+    -0.1119,
+    -0.1696,
+    -0.2767,
+    -0.5598,
+    0.0365
+   ]
+  },
+  {
+   "row": 263,
+   "subject": 2,
+   "true": "WALKING_DOWNSTAIRS",
+   "full_model_pred": "WALKING_DOWNSTAIRS",
+   "error_example": false,
+   "values": [
+    0.1193,
+    0.1822,
+    0.8695,
+    -0.3202,
+    0.1155,
+    -0.4528,
+    -0.2661,
+    0.4462
+   ]
+  },
+  {
+   "row": 1028,
+   "subject": 10,
+   "true": "WALKING_DOWNSTAIRS",
+   "full_model_pred": "WALKING_DOWNSTAIRS",
+   "error_example": false,
+   "values": [
+    0.2215,
+    0.2244,
+    0.9526,
+    -0.1676,
+    0.0039,
+    -0.0623,
+    -0.2746,
+    0.2136
+   ]
+  },
+  {
+   "row": 2164,
+   "subject": 18,
+   "true": "WALKING_DOWNSTAIRS",
+   "full_model_pred": "WALKING_DOWNSTAIRS",
+   "error_example": false,
+   "values": [
+    -0.159,
+    -0.1999,
+    0.9235,
+    -0.239,
+    -0.1879,
+    -0.5722,
+    -0.6026,
+    0.0031
+   ]
+  },
+  {
+   "row": 1333,
+   "subject": 12,
+   "true": "WALKING_DOWNSTAIRS",
+   "full_model_pred": "WALKING_DOWNSTAIRS",
+   "error_example": false,
+   "values": [
+    0.0488,
+    -0.0276,
+    0.965,
+    -0.163,
+    -0.0649,
+    -0.4351,
+    -0.5196,
+    0.0763
+   ]
+  },
+  {
+   "row": 1012,
+   "subject": 10,
+   "true": "WALKING_DOWNSTAIRS",
+   "full_model_pred": "WALKING_DOWNSTAIRS",
+   "error_example": false,
+   "values": [
+    0.4653,
+    0.4282,
+    0.93,
+    -0.1585,
+    0.0643,
+    -0.1074,
+    -0.2778,
+    0.2497
+   ]
+  },
+  {
+   "row": 2356,
+   "subject": 20,
+   "true": "WALKING_DOWNSTAIRS",
+   "full_model_pred": "WALKING_DOWNSTAIRS",
+   "error_example": false,
+   "values": [
+    0.1982,
+    0.3579,
+    0.909,
+    -0.3121,
+    -0.1622,
+    -0.4221,
+    -0.2815,
+    -0.0531
+   ]
+  },
+  {
+   "row": 2894,
+   "subject": 24,
+   "true": "WALKING_DOWNSTAIRS",
+   "full_model_pred": "WALKING_DOWNSTAIRS",
+   "error_example": false,
+   "values": [
+    -0.1141,
+    -0.0802,
+    0.956,
+    -0.1402,
+    -0.0922,
+    -0.3739,
+    -0.4683,
+    0.0392
+   ]
+  },
+  {
+   "row": 2708,
+   "subject": 24,
+   "true": "WALKING_DOWNSTAIRS",
+   "full_model_pred": "WALKING_DOWNSTAIRS",
+   "error_example": false,
+   "values": [
+    -0.1198,
+    -0.0826,
+    0.9477,
+    -0.1253,
+    -0.181,
+    -0.2363,
+    -0.4722,
+    -0.1244
+   ]
+  },
+  {
+   "row": 2167,
+   "subject": 18,
+   "true": "WALKING_DOWNSTAIRS",
+   "full_model_pred": "WALKING_UPSTAIRS",
+   "error_example": false,
+   "values": [
+    -0.4081,
+    -0.3388,
+    0.9295,
+    -0.2197,
+    -0.1833,
+    -0.6579,
+    -0.5932,
+    -0.1472
+   ]
+  },
+  {
+   "row": 1174,
+   "subject": 10,
+   "true": "WALKING_DOWNSTAIRS",
+   "full_model_pred": "WALKING_DOWNSTAIRS",
+   "error_example": false,
+   "values": [
+    0.227,
+    0.1333,
+    0.9346,
+    0.0494,
+    0.0517,
+    -0.4747,
+    -0.2872,
+    0.0224
+   ]
+  },
+  {
+   "row": 1158,
+   "subject": 10,
+   "true": "WALKING_DOWNSTAIRS",
+   "full_model_pred": "WALKING_DOWNSTAIRS",
+   "error_example": false,
+   "values": [
+    0.3571,
+    0.2309,
+    0.9223,
+    0.0231,
+    0.1056,
+    -0.5463,
+    -0.4087,
+    0.0188
+   ]
+  },
+  {
+   "row": 2002,
+   "subject": 18,
+   "true": "WALKING_DOWNSTAIRS",
+   "full_model_pred": "WALKING_DOWNSTAIRS",
+   "error_example": false,
+   "values": [
+    -0.3995,
+    -0.365,
+    0.9508,
+    -0.2205,
+    0.109,
+    -0.661,
+    -0.5788,
+    -0.0185
+   ]
+  },
+  {
+   "row": 2442,
+   "subject": 20,
+   "true": "SITTING",
+   "full_model_pred": "SITTING",
+   "error_example": false,
+   "values": [
+    -0.9934,
+    -0.9773,
+    0.9757,
+    -0.0717,
+    -0.0411,
+    -0.9863,
+    -0.9714,
+    -0.1208
+   ]
+  },
+  {
+   "row": 2610,
+   "subject": 24,
+   "true": "SITTING",
+   "full_model_pred": "SITTING",
+   "error_example": false,
+   "values": [
+    -0.9918,
+    -0.9777,
+    0.8912,
+    0.2616,
+    0.1785,
+    -0.9818,
+    -0.9834,
+    0.0589
+   ]
+  },
+  {
+   "row": 1236,
+   "subject": 12,
+   "true": "SITTING",
+   "full_model_pred": "SITTING",
+   "error_example": false,
+   "values": [
+    -0.9924,
+    -0.9841,
+    0.7699,
+    0.3195,
+    0.3668,
+    -0.9864,
+    -0.9772,
+    0.0702
+   ]
+  },
+  {
+   "row": 1898,
+   "subject": 18,
+   "true": "SITTING",
+   "full_model_pred": "SITTING",
+   "error_example": false,
+   "values": [
+    -0.9972,
+    -0.9945,
+    0.8016,
+    0.3729,
+    0.2572,
+    -0.9907,
+    -0.9961,
+    0.5681
+   ]
+  },
+  {
+   "row": 2432,
+   "subject": 20,
+   "true": "SITTING",
+   "full_model_pred": "SITTING",
+   "error_example": false,
+   "values": [
+    -0.9965,
+    -0.9901,
+    0.9167,
+    0.2464,
+    0.061,
+    -0.9935,
+    -0.9862,
+    0.2839
+   ]
+  },
+  {
+   "row": 643,
+   "subject": 9,
+   "true": "SITTING",
+   "full_model_pred": "SITTING",
+   "error_example": false,
+   "values": [
+    -0.992,
+    -0.9685,
+    0.954,
+    0.0199,
+    0.1698,
+    -0.9804,
+    -0.9693,
+    0.0012
+   ]
+  },
+  {
+   "row": 2260,
+   "subject": 20,
+   "true": "SITTING",
+   "full_model_pred": "SITTING",
+   "error_example": false,
+   "values": [
+    -0.998,
+    -0.9953,
+    0.8632,
+    0.1716,
+    0.3426,
+    -0.9902,
+    -0.9917,
+    0.5259
+   ]
+  },
+  {
+   "row": 2439,
+   "subject": 20,
+   "true": "SITTING",
+   "full_model_pred": "STANDING",
+   "error_example": false,
+   "values": [
+    -0.9981,
+    -0.9944,
+    0.9177,
+    0.246,
+    0.0627,
+    -0.9913,
+    -0.9901,
+    0.4119
+   ]
+  },
+  {
+   "row": 2280,
+   "subject": 20,
+   "true": "SITTING",
+   "full_model_pred": "SITTING",
+   "error_example": false,
+   "values": [
+    -0.9802,
+    -0.9475,
+    0.9554,
+    -0.0389,
+    0.1869,
+    -0.9815,
+    -0.9547,
+    -0.1356
+   ]
+  },
+  {
+   "row": 1092,
+   "subject": 10,
+   "true": "SITTING",
+   "full_model_pred": "STANDING",
+   "error_example": false,
+   "values": [
+    -0.8886,
+    -0.7729,
+    1.0,
+    -0.1181,
+    0.0121,
+    -0.9639,
+    -0.8787,
+    -0.5868
+   ]
+  },
+  {
+   "row": 804,
+   "subject": 9,
+   "true": "SITTING",
+   "full_model_pred": "SITTING",
+   "error_example": false,
+   "values": [
+    -0.9849,
+    -0.9721,
+    0.9647,
+    -0.0031,
+    -0.1385,
+    -0.9747,
+    -0.9563,
+    -0.1785
+   ]
+  },
+  {
+   "row": 661,
+   "subject": 9,
+   "true": "SITTING",
+   "full_model_pred": "SITTING",
+   "error_example": false,
+   "values": [
+    -0.9799,
+    -0.9371,
+    0.9679,
+    0.06,
+    -0.0119,
+    -0.9584,
+    -0.9288,
+    0.0621
+   ]
+  },
+  {
+   "row": 2071,
+   "subject": 18,
+   "true": "SITTING",
+   "full_model_pred": "SITTING",
+   "error_example": false,
+   "values": [
+    -0.9956,
+    -0.9867,
+    0.9134,
+    0.1703,
+    0.2253,
+    -0.9865,
+    -0.9822,
+    0.5149
+   ]
+  },
+  {
+   "row": 932,
+   "subject": 10,
+   "true": "SITTING",
+   "full_model_pred": "SITTING",
+   "error_example": false,
+   "values": [
+    -0.9968,
+    -0.9876,
+    0.6492,
+    0.5253,
+    0.2529,
+    -0.991,
+    -0.9852,
+    0.0947
+   ]
+  },
+  {
+   "row": 352,
+   "subject": 4,
+   "true": "SITTING",
+   "full_model_pred": "SITTING",
+   "error_example": false,
+   "values": [
+    -0.9923,
+    -0.9653,
+    0.9621,
+    0.0205,
+    0.1297,
+    -0.9926,
+    -0.9848,
+    -0.1066
+   ]
+  },
+  {
+   "row": 1706,
+   "subject": 13,
+   "true": "STANDING",
+   "full_model_pred": "STANDING",
+   "error_example": false,
+   "values": [
+    -0.9967,
+    -0.9805,
+    0.9606,
+    -0.1991,
+    0.0931,
+    -0.9907,
+    -0.9745,
+    0.0912
+   ]
+  },
+  {
+   "row": 1710,
+   "subject": 13,
+   "true": "STANDING",
+   "full_model_pred": "STANDING",
+   "error_example": false,
+   "values": [
+    -0.9983,
+    -0.9803,
+    0.941,
+    -0.2969,
+    0.035,
+    -0.9994,
+    -0.9813,
+    0.0796
+   ]
+  },
+  {
+   "row": 2226,
+   "subject": 20,
+   "true": "STANDING",
+   "full_model_pred": "STANDING",
+   "error_example": false,
+   "values": [
+    -0.9969,
+    -0.9879,
+    0.9469,
+    -0.1989,
+    0.1524,
+    -0.99,
+    -0.9872,
+    0.1144
+   ]
+  },
+  {
+   "row": 1365,
+   "subject": 12,
+   "true": "STANDING",
+   "full_model_pred": "STANDING",
+   "error_example": false,
+   "values": [
+    -0.9593,
+    -0.9168,
+    0.9591,
+    -0.2248,
+    0.0282,
+    -0.9518,
+    -0.8563,
+    0.0575
+   ]
+  },
+  {
+   "row": 1868,
+   "subject": 18,
+   "true": "STANDING",
+   "full_model_pred": "STANDING",
+   "error_example": false,
+   "values": [
+    -0.9957,
+    -0.9805,
+    0.9656,
+    -0.161,
+    0.0837,
+    -0.9935,
+    -0.9869,
+    -0.1337
+   ]
+  },
+  {
+   "row": 1880,
+   "subject": 18,
+   "true": "STANDING",
+   "full_model_pred": "STANDING",
+   "error_example": false,
+   "values": [
+    -0.9919,
+    -0.9731,
+    0.9562,
+    -0.2232,
+    0.0611,
+    -0.9883,
+    -0.9867,
+    -0.0298
+   ]
+  },
+  {
+   "row": 168,
+   "subject": 2,
+   "true": "STANDING",
+   "full_model_pred": "STANDING",
+   "error_example": false,
+   "values": [
+    -0.9954,
+    -0.9823,
+    0.895,
+    -0.3518,
+    0.1895,
+    -0.9933,
+    -0.9879,
+    -0.041
+   ]
+  },
+  {
+   "row": 636,
+   "subject": 9,
+   "true": "STANDING",
+   "full_model_pred": "STANDING",
+   "error_example": false,
+   "values": [
+    -0.9927,
+    -0.9709,
+    0.9604,
+    -0.0378,
+    0.1636,
+    -0.9872,
+    -0.9687,
+    -0.4248
+   ]
+  },
+  {
+   "row": 19,
+   "subject": 2,
+   "true": "STANDING",
+   "full_model_pred": "STANDING",
+   "error_example": false,
+   "values": [
+    -0.9701,
+    -0.9588,
+    0.8887,
+    -0.4189,
+    0.0469,
+    -0.9796,
+    -0.9683,
+    -0.0315
+   ]
+  },
+  {
+   "row": 1873,
+   "subject": 18,
+   "true": "STANDING",
+   "full_model_pred": "STANDING",
+   "error_example": false,
+   "values": [
+    -0.9984,
+    -0.9826,
+    0.9573,
+    -0.2207,
+    0.0519,
+    -0.9943,
+    -0.9844,
+    -0.0608
+   ]
+  },
+  {
+   "row": 307,
+   "subject": 4,
+   "true": "STANDING",
+   "full_model_pred": "STANDING",
+   "error_example": false,
+   "values": [
+    -0.9767,
+    -0.9285,
+    0.9423,
+    -0.063,
+    0.2297,
+    -0.9572,
+    -0.9518,
+    0.0493
+   ]
+  },
+  {
+   "row": 1703,
+   "subject": 13,
+   "true": "STANDING",
+   "full_model_pred": "STANDING",
+   "error_example": false,
+   "values": [
+    -0.9978,
+    -0.978,
+    0.9608,
+    -0.1999,
+    0.0988,
+    -0.991,
+    -0.9844,
+    -0.2374
+   ]
+  },
+  {
+   "row": 1383,
+   "subject": 12,
+   "true": "STANDING",
+   "full_model_pred": "STANDING",
+   "error_example": false,
+   "values": [
+    -0.9961,
+    -0.9823,
+    0.9625,
+    -0.2186,
+    0.0065,
+    -0.9897,
+    -0.9931,
+    0.1425
+   ]
+  },
+  {
+   "row": 320,
+   "subject": 4,
+   "true": "STANDING",
+   "full_model_pred": "STANDING",
+   "error_example": false,
+   "values": [
+    -0.9956,
+    -0.9685,
+    0.9599,
+    -0.0739,
+    0.1647,
+    -0.9913,
+    -0.9719,
+    -0.1251
+   ]
+  },
+  {
+   "row": 2413,
+   "subject": 20,
+   "true": "STANDING",
+   "full_model_pred": "STANDING",
+   "error_example": false,
+   "values": [
+    -0.8896,
+    -0.7823,
+    0.8344,
+    -0.4807,
+    -0.0558,
+    -0.8705,
+    -0.6592,
+    -0.0415
+   ]
+  },
+  {
+   "row": 2461,
+   "subject": 20,
+   "true": "LAYING",
+   "full_model_pred": "LAYING",
+   "error_example": false,
+   "values": [
+    -0.9916,
+    -0.9856,
+    -0.1898,
+    0.8569,
+    0.4862,
+    -0.993,
+    -0.9715,
+    0.4018
+   ]
+  },
+  {
+   "row": 2654,
+   "subject": 24,
+   "true": "LAYING",
+   "full_model_pred": "LAYING",
+   "error_example": false,
+   "values": [
+    -0.9352,
+    -0.934,
+    -0.4646,
+    0.7773,
+    0.6513,
+    -0.8926,
+    -0.8255,
+    0.3369
+   ]
+  },
+  {
+   "row": 833,
+   "subject": 9,
+   "true": "LAYING",
+   "full_model_pred": "LAYING",
+   "error_example": false,
+   "values": [
+    -0.9777,
+    -0.9667,
+    -0.4605,
+    -0.3742,
+    0.9516,
+    -0.9905,
+    -0.9714,
+    -0.2216
+   ]
+  },
+  {
+   "row": 1938,
+   "subject": 18,
+   "true": "LAYING",
+   "full_model_pred": "LAYING",
+   "error_example": false,
+   "values": [
+    -0.9933,
+    -0.9932,
+    -0.164,
+    0.9178,
+    0.3325,
+    -0.9896,
+    -0.9897,
+    0.6152
+   ]
+  },
+  {
+   "row": 1600,
+   "subject": 13,
+   "true": "LAYING",
+   "full_model_pred": "LAYING",
+   "error_example": false,
+   "values": [
+    -0.969,
+    -0.9542,
+    -0.1132,
+    0.4451,
+    0.8658,
+    -0.9852,
+    -0.9631,
+    -0.0705
+   ]
+  },
+  {
+   "row": 2475,
+   "subject": 20,
+   "true": "LAYING",
+   "full_model_pred": "LAYING",
+   "error_example": false,
+   "values": [
+    -0.9343,
+    -0.9308,
+    -0.3161,
+    0.8765,
+    0.4807,
+    -0.9591,
+    -0.915,
+    -0.4051
+   ]
+  },
+  {
+   "row": 1572,
+   "subject": 13,
+   "true": "LAYING",
+   "full_model_pred": "LAYING",
+   "error_example": false,
+   "values": [
+    -0.8899,
+    -0.8214,
+    -0.1078,
+    0.4434,
+    0.864,
+    -0.9675,
+    -0.9602,
+    -0.2429
+   ]
+  },
+  {
+   "row": 73,
+   "subject": 2,
+   "true": "LAYING",
+   "full_model_pred": "LAYING",
+   "error_example": false,
+   "values": [
+    -0.9729,
+    -0.9817,
+    -0.5542,
+    0.7691,
+    0.6355,
+    -0.9866,
+    -0.9917,
+    -0.0263
+   ]
+  },
+  {
+   "row": 686,
+   "subject": 9,
+   "true": "LAYING",
+   "full_model_pred": "LAYING",
+   "error_example": false,
+   "values": [
+    -0.9446,
+    -0.9308,
+    -0.7744,
+    0.1931,
+    0.9764,
+    -0.9223,
+    -0.8871,
+    0.1767
+   ]
+  },
+  {
+   "row": 957,
+   "subject": 10,
+   "true": "LAYING",
+   "full_model_pred": "LAYING",
+   "error_example": false,
+   "values": [
+    -0.9913,
+    -0.9929,
+    -0.4293,
+    0.941,
+    0.306,
+    -0.9917,
+    -0.9804,
+    0.4
+   ]
+  },
+  {
+   "row": 373,
+   "subject": 4,
+   "true": "LAYING",
+   "full_model_pred": "LAYING",
+   "error_example": false,
+   "values": [
+    -0.9859,
+    -0.988,
+    -0.4403,
+    0.8862,
+    0.4458,
+    -0.9896,
+    -0.9619,
+    0.2599
+   ]
+  },
+  {
+   "row": 209,
+   "subject": 2,
+   "true": "LAYING",
+   "full_model_pred": "LAYING",
+   "error_example": false,
+   "values": [
+    -0.992,
+    -0.989,
+    -0.4618,
+    0.732,
+    0.6799,
+    -0.9868,
+    -0.9877,
+    0.515
+   ]
+  },
+  {
+   "row": 2480,
+   "subject": 20,
+   "true": "LAYING",
+   "full_model_pred": "LAYING",
+   "error_example": false,
+   "values": [
+    -0.9945,
+    -0.9972,
+    -0.4971,
+    0.9759,
+    0.2461,
+    -0.9923,
+    -0.9818,
+    0.7702
+   ]
+  },
+  {
+   "row": 1277,
+   "subject": 12,
+   "true": "LAYING",
+   "full_model_pred": "LAYING",
+   "error_example": false,
+   "values": [
+    -0.9809,
+    -0.9706,
+    -0.4661,
+    0.6551,
+    0.7659,
+    -0.9925,
+    -0.9756,
+    -0.1451
+   ]
+  },
+  {
+   "row": 2309,
+   "subject": 20,
+   "true": "LAYING",
+   "full_model_pred": "LAYING",
+   "error_example": false,
+   "values": [
+    -0.9888,
+    -0.9918,
+    -0.5151,
+    0.8218,
+    0.5949,
+    -0.9898,
+    -0.9886,
+    0.5638
+   ]
+  },
+  {
+   "row": 511,
+   "subject": 4,
+   "true": "SITTING",
+   "full_model_pred": "STANDING",
+   "error_example": true,
+   "values": [
+    -0.9854,
+    -0.9609,
+    0.9768,
+    -0.0308,
+    0.0321,
+    -0.9784,
+    -0.9684,
+    0.2043
+   ]
+  },
+  {
+   "row": 2438,
+   "subject": 20,
+   "true": "SITTING",
+   "full_model_pred": "STANDING",
+   "error_example": true,
+   "values": [
+    -0.9992,
+    -0.9958,
+    0.9182,
+    0.2452,
+    0.0619,
+    -0.9936,
+    -0.9924,
+    0.5326
+   ]
+  },
+  {
+   "row": 756,
+   "subject": 9,
+   "true": "WALKING_UPSTAIRS",
+   "full_model_pred": "WALKING",
+   "error_example": true,
+   "values": [
+    -0.54,
+    -0.4049,
+    0.9685,
+    -0.1107,
+    -0.1638,
+    -0.6236,
+    -0.6031,
+    0.1998
+   ]
+  },
+  {
+   "row": 1190,
+   "subject": 10,
+   "true": "WALKING_UPSTAIRS",
+   "full_model_pred": "WALKING",
+   "error_example": true,
+   "values": [
+    -0.1381,
+    0.0582,
+    0.9159,
+    0.1516,
+    0.0214,
+    -0.4806,
+    0.0555,
+    0.0472
+   ]
+  },
+  {
+   "row": 2524,
+   "subject": 20,
+   "true": "WALKING_DOWNSTAIRS",
+   "full_model_pred": "WALKING_UPSTAIRS",
+   "error_example": true,
+   "values": [
+    0.1787,
+    0.2986,
+    0.937,
+    -0.2533,
+    0.0376,
+    -0.4453,
+    -0.1831,
+    -0.203
+   ]
+  },
+  {
+   "row": 2168,
+   "subject": 18,
+   "true": "WALKING_DOWNSTAIRS",
+   "full_model_pred": "WALKING_UPSTAIRS",
+   "error_example": true,
+   "values": [
+    -0.399,
+    -0.3483,
+    0.9259,
+    -0.2257,
+    -0.197,
+    -0.6161,
+    -0.5687,
+    -0.09
+   ]
+  },
+  {
+   "row": 469,
+   "subject": 4,
+   "true": "STANDING",
+   "full_model_pred": "SITTING",
+   "error_example": true,
+   "values": [
+    -0.9738,
+    -0.8842,
+    0.9537,
+    -0.0732,
+    0.1856,
+    -0.9676,
+    -0.9414,
+    -0.1369
+   ]
+  },
+  {
+   "row": 1071,
+   "subject": 10,
+   "true": "STANDING",
+   "full_model_pred": "SITTING",
+   "error_example": true,
+   "values": [
+    -0.997,
+    -0.9719,
+    0.9405,
+    0.1744,
+    -0.0023,
+    -0.9952,
+    -0.9785,
+    -0.2034
+   ]
+  },
+  {
+   "row": 1125,
+   "subject": 10,
+   "true": "LAYING",
+   "full_model_pred": "STANDING",
+   "error_example": true,
+   "values": [
+    -0.9785,
+    -0.9763,
+    -0.3959,
+    -0.9979,
+    0.2921,
+    -0.9961,
+    -0.959,
+    0.2191
+   ]
+  },
+  {
+   "row": 1636,
+   "subject": 13,
+   "true": "WALKING_DOWNSTAIRS",
+   "full_model_pred": "WALKING",
+   "error_example": true,
+   "values": [
+    -0.3428,
+    -0.2984,
+    0.9349,
+    -0.2092,
+    -0.184,
+    -0.5302,
+    -0.4356,
+    0.0522
+   ]
+  },
+  {
+   "row": 1330,
+   "subject": 12,
+   "true": "WALKING_DOWNSTAIRS",
+   "full_model_pred": "WALKING",
+   "error_example": true,
+   "values": [
+    -0.2079,
+    -0.1996,
+    0.9591,
+    -0.1673,
+    -0.0445,
+    -0.5044,
+    -0.602,
+    0.0639
+   ]
+  }
+ ]
+}

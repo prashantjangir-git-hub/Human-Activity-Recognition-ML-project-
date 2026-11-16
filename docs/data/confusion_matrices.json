@@ -1,0 +1,462 @@
+{
+ "Majority Class (Baseline)": {
+  "labels": [
+   "WALKING",
+   "WALKING_UPSTAIRS",
+   "WALKING_DOWNSTAIRS",
+   "SITTING",
+   "STANDING",
+   "LAYING"
+  ],
+  "matrix": [
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    496
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    471
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    420
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    491
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    532
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    537
+   ]
+  ],
+  "report": {
+   "WALKING": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0
+   },
+   "WALKING_UPSTAIRS": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0
+   },
+   "WALKING_DOWNSTAIRS": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0
+   },
+   "SITTING": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0
+   },
+   "STANDING": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0
+   },
+   "LAYING": {
+    "precision": 0.1822,
+    "recall": 1.0,
+    "f1-score": 0.3083
+   }
+  }
+ },
+ "Logistic Regression": {
+  "labels": [
+   "WALKING",
+   "WALKING_UPSTAIRS",
+   "WALKING_DOWNSTAIRS",
+   "SITTING",
+   "STANDING",
+   "LAYING"
+  ],
+  "matrix": [
+   [
+    493,
+    0,
+    3,
+    0,
+    0,
+    0
+   ],
+   [
+    24,
+    446,
+    1,
+    0,
+    0,
+    0
+   ],
+   [
+    7,
+    19,
+    394,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    3,
+    0,
+    430,
+    58,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    19,
+    513,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    14,
+    523
+   ]
+  ],
+  "report": {
+   "WALKING": {
+    "precision": 0.9408,
+    "recall": 0.994,
+    "f1-score": 0.9667
+   },
+   "WALKING_UPSTAIRS": {
+    "precision": 0.953,
+    "recall": 0.9469,
+    "f1-score": 0.9499
+   },
+   "WALKING_DOWNSTAIRS": {
+    "precision": 0.9899,
+    "recall": 0.9381,
+    "f1-score": 0.9633
+   },
+   "SITTING": {
+    "precision": 0.9577,
+    "recall": 0.8758,
+    "f1-score": 0.9149
+   },
+   "STANDING": {
+    "precision": 0.8769,
+    "recall": 0.9643,
+    "f1-score": 0.9185
+   },
+   "LAYING": {
+    "precision": 1.0,
+    "recall": 0.9739,
+    "f1-score": 0.9868
+   }
+  }
+ },
+ "Random Forest": {
+  "labels": [
+   "WALKING",
+   "WALKING_UPSTAIRS",
+   "WALKING_DOWNSTAIRS",
+   "SITTING",
+   "STANDING",
+   "LAYING"
+  ],
+  "matrix": [
+   [
+    481,
+    9,
+    6,
+    0,
+    0,
+    0
+   ],
+   [
+    43,
+    422,
+    6,
+    0,
+    0,
+    0
+   ],
+   [
+    23,
+    46,
+    351,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    439,
+    52,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    34,
+    498,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    537
+   ]
+  ],
+  "report": {
+   "WALKING": {
+    "precision": 0.8793,
+    "recall": 0.9698,
+    "f1-score": 0.9223
+   },
+   "WALKING_UPSTAIRS": {
+    "precision": 0.8847,
+    "recall": 0.896,
+    "f1-score": 0.8903
+   },
+   "WALKING_DOWNSTAIRS": {
+    "precision": 0.9669,
+    "recall": 0.8357,
+    "f1-score": 0.8966
+   },
+   "SITTING": {
+    "precision": 0.9281,
+    "recall": 0.8941,
+    "f1-score": 0.9108
+   },
+   "STANDING": {
+    "precision": 0.9055,
+    "recall": 0.9361,
+    "f1-score": 0.9205
+   },
+   "LAYING": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0
+   }
+  }
+ },
+ "SVM (RBF)": {
+  "labels": [
+   "WALKING",
+   "WALKING_UPSTAIRS",
+   "WALKING_DOWNSTAIRS",
+   "SITTING",
+   "STANDING",
+   "LAYING"
+  ],
+  "matrix": [
+   [
+    493,
+    0,
+    3,
+    0,
+    0,
+    0
+   ],
+   [
+    16,
+    454,
+    1,
+    0,
+    0,
+    0
+   ],
+   [
+    5,
+    19,
+    396,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    1,
+    0,
+    428,
+    62,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    22,
+    510,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    537
+   ]
+  ],
+  "report": {
+   "WALKING": {
+    "precision": 0.9591,
+    "recall": 0.994,
+    "f1-score": 0.9762
+   },
+   "WALKING_UPSTAIRS": {
+    "precision": 0.9578,
+    "recall": 0.9639,
+    "f1-score": 0.9608
+   },
+   "WALKING_DOWNSTAIRS": {
+    "precision": 0.99,
+    "recall": 0.9429,
+    "f1-score": 0.9659
+   },
+   "SITTING": {
+    "precision": 0.9511,
+    "recall": 0.8717,
+    "f1-score": 0.9097
+   },
+   "STANDING": {
+    "precision": 0.8916,
+    "recall": 0.9586,
+    "f1-score": 0.9239
+   },
+   "LAYING": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0
+   }
+  }
+ },
+ "k-Nearest Neighbours": {
+  "labels": [
+   "WALKING",
+   "WALKING_UPSTAIRS",
+   "WALKING_DOWNSTAIRS",
+   "SITTING",
+   "STANDING",
+   "LAYING"
+  ],
+  "matrix": [
+   [
+    488,
+    2,
+    6,
+    0,
+    0,
+    0
+   ],
+   [
+    47,
+    422,
+    2,
+    0,
+    0,
+    0
+   ],
+   [
+    57,
+    57,
+    306,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    1,
+    0,
+    375,
+    113,
+    2
+   ],
+   [
+    0,
+    0,
+    0,
+    20,
+    512,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    10,
+    16,
+    511
+   ]
+  ],
+  "report": {
+   "WALKING": {
+    "precision": 0.8243,
+    "recall": 0.9839,
+    "f1-score": 0.8971
+   },
+   "WALKING_UPSTAIRS": {
+    "precision": 0.8755,
+    "recall": 0.896,
+    "f1-score": 0.8856
+   },
+   "WALKING_DOWNSTAIRS": {
+    "precision": 0.9745,
+    "recall": 0.7286,
+    "f1-score": 0.8338
+   },
+   "SITTING": {
+    "precision": 0.9259,
+    "recall": 0.7637,
+    "f1-score": 0.8371
+   },
+   "STANDING": {
+    "precision": 0.7988,
+    "recall": 0.9624,
+    "f1-score": 0.873
+   },
+   "LAYING": {
+    "precision": 0.9961,
+    "recall": 0.9516,
+    "f1-score": 0.9733
+   }
+  }
+ }
+}

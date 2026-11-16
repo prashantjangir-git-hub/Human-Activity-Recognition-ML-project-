@@ -1,0 +1,106 @@
+{
+ "model": "Logistic Regression",
+ "rows": [
+  {
+   "Subject": 2,
+   "Windows": 302,
+   "Accuracy": 0.9834,
+   "Macro-F1": 0.983
+  },
+  {
+   "Subject": 4,
+   "Windows": 317,
+   "Accuracy": 0.9558,
+   "Macro-F1": 0.9559
+  },
+  {
+   "Subject": 9,
+   "Windows": 288,
+   "Accuracy": 0.8958,
+   "Macro-F1": 0.8954
+  },
+  {
+   "Subject": 10,
+   "Windows": 294,
+   "Accuracy": 0.8265,
+   "Macro-F1": 0.834
+  },
+  {
+   "Subject": 12,
+   "Windows": 320,
+   "Accuracy": 0.9531,
+   "Macro-F1": 0.9521
+  },
+  {
+   "Subject": 13,
+   "Windows": 327,
+   "Accuracy": 0.9878,
+   "Macro-F1": 0.9869
+  },
+  {
+   "Subject": 18,
+   "Windows": 364,
+   "Accuracy": 0.9698,
+   "Macro-F1": 0.9679
+  },
+  {
+   "Subject": 20,
+   "Windows": 354,
+   "Accuracy": 0.952,
+   "Macro-F1": 0.9474
+  },
+  {
+   "Subject": 24,
+   "Windows": 381,
+   "Accuracy": 0.9974,
+   "Macro-F1": 0.9976
+  }
+ ],
+ "errors": [
+  {
+   "subject": 2,
+   "error": 5,
+   "sit_stand": 5
+  },
+  {
+   "subject": 4,
+   "error": 14,
+   "sit_stand": 10
+  },
+  {
+   "subject": 9,
+   "error": 30,
+   "sit_stand": 19
+  },
+  {
+   "subject": 10,
+   "error": 51,
+   "sit_stand": 22
+  },
+  {
+   "subject": 12,
+   "error": 15,
+   "sit_stand": 11
+  },
+  {
+   "subject": 13,
+   "error": 4,
+   "sit_stand": 0
+  },
+  {
+   "subject": 18,
+   "error": 11,
+   "sit_stand": 2
+  },
+  {
+   "subject": 20,
+   "error": 17,
+   "sit_stand": 7
+  },
+  {
+   "subject": 24,
+   "error": 1,
+   "sit_stand": 1
+  }
+ ]
+}
