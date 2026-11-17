@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -213,7 +213,7 @@
           <p class="method-note">Assumes nothing about the features, which is the point.</p>
         </div>
         <div class="card method-card">
-          <div class="method-tag baseline">Baseline</div>
+          <div class="method-tag baseline">Candidate model</div>
           <h3>Logistic regression</h3>
           <p>A linear classifier: one weighted sum of features per class, then softmax. Tests whether the engineered
             features are already linearly separable, and its weights are easy to inspect.</p>
@@ -237,7 +237,7 @@
           <p>Finds the boundary with the widest margin between classes; the RBF kernel lets that boundary curve. It is
             the method used in the original dataset paper.</p>
           <p class="method-assume"><strong>Objective:</strong> hinge loss plus an L2 penalty (widest margin).
-            <strong>Assumes:</strong> windows close together in scaled feature space usually share a class.</p>
+            <strong>Assumes:</strong> windows that are close together in the scaled feature space usually share a class.</p>
           <p class="method-note">Grid: C ∈ {1, 10, 100}, γ ∈ {scale, 10⁻³, 10⁻⁴} → picked C = 100, γ = 10⁻⁴</p>
         </div>
         <div class="card method-card">
@@ -397,7 +397,7 @@
           <h3>Errors depend on the person</h3>
           <p class="card-sub">Macro-F1 for each test person. <strong>Click a bar</strong> for details.</p>
           <div id="subjChart" class="subj-chart"></div>
-          <div id="subjDetail" class="subj-detail">Subjects 10 and 9 cause 53% of all sitting/standing confusions.</div>
+          <div id="subjDetail" class="subj-detail">Subjects 10 and 9 account for 53% of all sitting/standing confusions.</div>
         </div>
       </div>
 
