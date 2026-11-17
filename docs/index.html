@@ -237,7 +237,7 @@
           <p>Finds the boundary with the widest margin between classes; the RBF kernel lets that boundary curve. It is
             the method used in the original dataset paper.</p>
           <p class="method-assume"><strong>Objective:</strong> hinge loss plus an L2 penalty (widest margin).
-            <strong>Assumes:</strong> windows that are close together in the scaled feature space usually share a class.</p>
+            <strong>Assumes:</strong> windows close together in scaled feature space usually share a class.</p>
           <p class="method-note">Grid: C ∈ {1, 10, 100}, γ ∈ {scale, 10⁻³, 10⁻⁴} → picked C = 100, γ = 10⁻⁴</p>
         </div>
         <div class="card method-card">
@@ -336,7 +336,7 @@
           tuning problem: changing a model's settings moves its CV score by about 0.02 at most, while changing which
           people are held out moves it by 0.08–0.13, and the same fold (people 14, 15, 19, 25) is the hardest for every
           model. The score of every setting and fold is in
-          <a href="https://github.com/prashantjangir-git-hub/Human-Activity-Recognition-ML-project-/blob/main/results/grid_search_results.csv"><code>results/grid_search_results.csv</code></a>.
+          <a href="https://github.com/ToothlessSyntax/Machine-Learning-Project-/blob/main/results/grid_search_results.csv"><code>results/grid_search_results.csv</code></a>.
           (k-NN with distance weighting scores 1.0 on train by construction.)</p>
       </div>
 
@@ -519,16 +519,21 @@
           <h3>Team &amp; contributions</h3>
           <table class="info-table">
             <tr><td class="label-cell">Bhanavath Charan Tej Naik<br><span class="muted-small">25110073</span></td>
-              <td>Chose the problem and dataset and wrote the proposal. Data loading, quality checks, class balance and
-                PCA. Built the first five-model comparison, confusion matrices and feature importance. Designed the
-                website and built the confusion-matrix and feature-importance explorers.</td></tr>
+              <td>Chose the question and the dataset, and wrote the proposal. Loaded the data and did the quality
+                checks, the class-balance count and the PCA plot. Built the first comparison of the five models,
+                with their confusion matrices. Replaced the window-level cross-validation with person-grouped
+                cross-validation (<code>GroupKFold</code>), ran the grid search for every model on it, and measured
+                how much the old split had inflated the scores.</td></tr>
             <tr><td class="label-cell">Prashant<br><span class="muted-small">25110245</span></td>
-              <td>Reviewed the project against the rubric and found the evaluation problems. Person-grouped
-                cross-validation with grid search, and the leakage comparison. Bootstrap uncertainty over test people.
-                Built the 8-feature demo model and the error-window browser.</td></tr>
+              <td>Found the main problem in our first version: its cross-validation shuffled windows, so the same
+                person appeared in both the training and the validation folds. Designed the website and built the
+                confusion-matrix and feature-importance explorers. Computed the feature importance, including the
+                signal-group view. Estimated uncertainty with a bootstrap over test people, including the
+                logistic regression vs. SVM comparison. Broke the errors down by test person. Built the 8-feature
+                demo model and the browser for real test windows.</td></tr>
             <tr><td class="label-cell">Both</td>
-              <td>Error analysis and interpretation of the results, limitations and conclusions, updating the website
-                to match the final results, and the README and reproduction steps.</td></tr>
+              <td>Interpreting the results and the sitting/standing error analysis, the limitations and conclusions,
+                keeping the website in line with the final notebook, and the README and reproduction steps.</td></tr>
           </table>
         </div>
         <div class="card">
@@ -544,9 +549,76 @@
             Adobe Mixamo, rendered with a small WebGL script written for this site.</p>
           <p class="card-sub" style="margin-top:1rem;margin-bottom:0"><strong>AI tools disclosure:</strong>
             Gemini scaffolded the initial code and built a basic website. Claude was used to review the project,
-            error analysis and the 3d demo model rendering, and rebuild the website text and interactions.
+            error analysis and the 3d demo model rendering, and rebuild the website text and interactions. Claude also
+            helped improve the English of the team and "key decisions" sections from our own notes.
             We have checked every number against the notebook, re-ran the full analysis, and take responsibility
             for every result on this page.</p>
+        </div>
+      </div>
+
+      <div class="card" id="team" style="margin-top:1.5rem;">
+        <h3>Key decisions, explained by the person who made them</h3>
+        <p class="card-sub">For each of us: one main choice and why we made it, how we checked it, one limitation, and
+          what happens if you change one small thing. Every number here comes from <code>analysis.ipynb</code>.</p>
+        <div class="card-grid two-col">
+          <div class="defense-col">
+            <h4>Bhanavath Charan Tej Naik <span class="muted-small">25110073</span></h4>
+            <table class="info-table defense-table">
+              <tr><td class="label-cell">My main choice</td>
+                <td><strong>Validate by person, not by window.</strong> Our first notebook used
+                  <code>StratifiedKFold(shuffle=True)</code> on windows. Windows overlap by 50% and each person gives
+                  281–409 of them, so a shuffled split puts almost identical windows from the same person into both
+                  training and validation. The model is then tested on people it has already seen, which is not our
+                  question. I switched to <code>GroupKFold</code> with 5 folds by person, so every validation fold
+                  holds 4–5 people the model never trained on.</td></tr>
+              <tr><td class="label-cell">How I checked it</td>
+                <td>I scored the same tuned models both ways. For logistic regression, shuffled K-fold gives 0.984
+                  macro-F1 and grouped K-fold gives 0.934. The real test score on 9 new people is 0.950, much closer
+                  to the grouped number, so the grouped split is the honest one. The shuffled split overstated scores
+                  by 5–8 points for every model we checked. We picked the final model by the grouped CV score, before
+                  looking at the test set.</td></tr>
+              <tr><td class="label-cell">A limitation</td>
+                <td>With only 21 training people, each fold has just 4–5 people, and the score moves by about ±0.04
+                  from fold to fold. The top two models differ by only 0.002 in CV (0.934 vs. 0.932), so CV cannot
+                  really say which is better. We picked logistic regression but treat the two as a tie.</td></tr>
+              <tr><td class="label-cell">A small change</td>
+                <td><strong>What if we change C from 0.1 to 1?</strong> CV macro-F1 goes from 0.9339 to 0.9334:
+                  almost nothing. Across all four C values it moves by less than 0.01, and across all nine SVM settings
+                  by about 0.02. But changing <em>which people</em> are held out moves the score by 0.08–0.13, and one
+                  fold (people 14, 15, 19, 25) is the hardest for every model. So who you test on matters far more
+                  than the exact setting, and more tuning would not help much.</td></tr>
+            </table>
+          </div>
+          <div class="defense-col">
+            <h4>Prashant <span class="muted-small">25110245</span></h4>
+            <table class="info-table defense-table">
+              <tr><td class="label-cell">My main choice</td>
+                <td><strong>Measure uncertainty by resampling people, not windows.</strong> Windows from the same
+                  person are strongly related, so treating the 2,947 test windows as independent would make the
+                  result look far more certain than it is. I resampled the 9 test people with replacement 2,000
+                  times and recomputed macro-F1 each time. For logistic regression this gives 0.950, with a 95%
+                  interval of 0.915–0.976.</td></tr>
+              <tr><td class="label-cell">How I checked it</td>
+                <td>On the test people the SVM scored 0.956 and logistic regression 0.950. Switching to the SVM
+                  because of that would mean using the test set to choose a model. Instead I compared the two on the
+                  same bootstrap samples: logistic regression minus SVM is −0.006, with an interval of [−0.021,
+                  +0.003]. That includes zero, so the test data cannot separate them, and we kept the model chosen by
+                  CV. For the demo, I redid the browser's maths in NumPy, and it gives the same prediction as
+                  scikit-learn on 100% of test windows.</td></tr>
+              <tr><td class="label-cell">A limitation</td>
+                <td>We have only 9 test people, and they differ a lot: macro-F1 is 0.834 for subject 10 and 0.998
+                  for subject 24, and subjects 10 and 9 alone cause 53% of the sitting/standing mix-ups. With so few
+                  people the interval edges are rough. The bootstrap also keeps the trained model fixed, so it
+                  ignores how much the result depends on which people we trained on.</td></tr>
+              <tr><td class="label-cell">A small change</td>
+                <td><strong>What if only the phone's tilt changes?</strong> In the demo, start from a typical
+                  standing window (gravity Y = −0.18) and raise only gravity Y. At about −0.05 the prediction flips
+                  to sitting. This matches the error analysis: the wrongly classified sitting windows have
+                  standing-like values on the closely related <code>tGravityAcc-max()-Y</code>. A second change:
+                  cutting the model from 561 features to these 8 drops test macro-F1 from 0.950 to 0.842, so a few
+                  meaningful features get most of the way, but the rest still add about 0.11.</td></tr>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -563,8 +635,8 @@
         <h3>Steps</h3>
         <div class="code-block">
           <pre><code># 1. Get the code
-git clone https://github.com/prashantjangir-git-hub/Human-Activity-Recognition-ML-project-.git
-cd Human-Activity-Recognition-ML-project-
+git clone https://github.com/ToothlessSyntax/Machine-Learning-Project-.git
+cd Machine-Learning-Project-
 
 # 2. Install dependencies (Python 3.11+; tested with 3.13 and 3.14, identical results)
 pip install -r requirements.txt
@@ -584,7 +656,7 @@ jupyter nbconvert --to notebook --execute --inplace analysis.ipynb
           13, 18, 20, 24. <strong>CV:</strong> GroupKFold, 5 folds, by person. <strong>Seed:</strong> 42.</p>
       </div>
 
-      <p class="card-sub" style="margin-top:1rem;margin-bottom:0">Code: <a href="https://github.com/prashantjangir-git-hub/Human-Activity-Recognition-ML-project-">github.com/prashantjangir-git-hub/Human-Activity-Recognition-ML-project-</a>
+      <p class="card-sub" style="margin-top:1rem;margin-bottom:0">Code: <a href="https://github.com/ToothlessSyntax/Machine-Learning-Project-">github.com/ToothlessSyntax/Machine-Learning-Project-</a>
         · data: <a href="https://archive.ics.uci.edu/dataset/240">UCI HAR Dataset</a> (not stored in the repo).</p>
     </div>
   </section>
