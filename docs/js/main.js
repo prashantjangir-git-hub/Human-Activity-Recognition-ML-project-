@@ -38,10 +38,7 @@ function barRows(el, rows, { max, fmt = v => v, labelWidth = 150 } = {}) {
 
 /* ── Navbar, counters, scroll reveal, back-to-top ── */
 function initChrome() {
-  const links = $("navLinks"), burger = $("navBurger");
-  burger?.addEventListener("click", () => burger.setAttribute("aria-expanded", links.classList.toggle("open")));
-  links.querySelectorAll("a").forEach(a => a.addEventListener("click", () => { links.classList.remove("open"); burger?.setAttribute("aria-expanded", "false"); }));
-  initScrollSpy(links);
+  initScrollSpy($("navLinks"));
   initTheme();
   initDial();
   initToTop();
@@ -211,6 +208,8 @@ function initScrollSpy(links) {
     ind.style.width = `${current.offsetWidth}px`; ind.style.height = `${current.offsetHeight}px`;
     ind.style.transform = `translate(${current.offsetLeft}px, ${current.offsetTop}px)`;
     ind.style.opacity = "1";
+    if (links.scrollWidth > links.clientWidth + 2)  // narrow screens: keep the active link in view inside the bar
+      links.scrollTo({ left: current.offsetLeft - (links.clientWidth - current.offsetWidth) / 2, behavior: REDUCE ? "auto" : "smooth" });
   };
   const setActive = a => {
     if (a === current) return;
@@ -236,7 +235,20 @@ function initScrollSpy(links) {
   navLinks.forEach(a => a.addEventListener("click", () => {
     setActive(a);                                 // highlight the clicked link right away
     lockUntil = Date.now() + 1200;                // don't flicker through the sections passed on the way
+    if (REDUCE) return;
     a.classList.remove("nav-pop"); void a.offsetWidth; a.classList.add("nav-pop");
+    // once the page stops scrolling, the section's number badge presses in to show where you landed
+    const head = document.getElementById(a.getAttribute("href").slice(1))?.querySelector(".section-header");
+    if (!head) return;
+    let done = false;
+    const land = () => {
+      if (done) return; done = true;
+      removeEventListener("scrollend", land);
+      const badge = head.querySelector(".section-badge");
+      for (const el of [head, badge]) { el.classList.remove("arrive"); void el.offsetWidth; el.classList.add("arrive"); }
+    };
+    addEventListener("scrollend", land);
+    setTimeout(land, 1600);                       // fallback: no "scrollend" support, or no scroll needed
   }));
   update();
 }
