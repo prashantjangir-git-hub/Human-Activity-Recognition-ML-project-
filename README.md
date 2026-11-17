@@ -8,13 +8,15 @@ Can a 2.56-second window of waist-worn phone accelerometer and gyroscope data te
 
 | Model | CV macro-F1 (grouped by person) | Test macro-F1 | 95% interval (bootstrap over test people) |
 |---|---|---|---|
-| Majority class | 0.054 | 0.051 | 0.050–0.053 |
+| Majority class (floor) | 0.054 | 0.051 | 0.050–0.053 |
 | **Logistic regression (selected)** | **0.934** | **0.950** | 0.915–0.976 |
 | Random forest | 0.918 | 0.923 | 0.890–0.954 |
 | SVM (RBF) | 0.932 | 0.956 | 0.932–0.974 |
 | k-NN | 0.873 | 0.883 | 0.851–0.911 |
 
 Logistic regression was selected by CV before the test set was used. The SVM's slightly higher test score is within noise (paired difference −0.006, 95% interval [−0.021, +0.003]).
+
+The simple baseline is the 8-feature logistic regression from notebook Step 9 (also used in the website demo): CV macro-F1 0.880, test 0.842. The full logistic regression beats it in CV (0.934) and on test (0.950).
 
 ## Repository layout
 
@@ -54,11 +56,12 @@ UCI HAR Dataset, Anguita et al. (2013), distributed by the UCI Machine Learning 
 ## Third-party assets
 
 `docs/data/character.js` holds the 3D figure used in the website demo: the "Ch03" character and animations from [Adobe Mixamo](https://www.mixamo.com), packed into a JavaScript file for the site's small WebGL renderer (`docs/js/figure3d.js`). It is a prebuilt asset and is not produced by `analysis.ipynb`. The figure only illustrates the demo model's prediction; it plays no part in any result.
+It is used under Mixamo's royalty-free terms as part of this site only; it is not offered as a standalone asset, so please do not extract or reuse it (get it from Mixamo instead).
 
 ## AI tools disclosure
 
 - **Gemini:** drafting initial code structure and a base version of the website.
-- **Claude:** reviewing the project; the error analysis; making the demo 3d model; rebuilding the website interactions; editing.
+- **Claude:** reviewing the project; the error analysis; making the demo 3d model; rebuilding the website interactions; editing including improving the vocabulary of it.
 
 We checked the outputs against the notebook, re-ran the full analysis, and are responsible for every result.
 
