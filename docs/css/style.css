@@ -139,7 +139,7 @@ p  { color: var(--text); }
 .nav-inner {
   pointer-events: auto;
   max-width: 1250px; margin: 0 auto;
-  padding: 0 0.6rem 0 1.2rem;
+  padding: 0 0.6rem 0 0.6rem;
   height: 58px;
   display: flex; align-items: center; gap: 1rem;
   background: var(--bg);
@@ -147,28 +147,31 @@ p  { color: var(--text); }
   box-shadow: var(--raise);
   position: relative;
 }
-.nav-brand {
-  font-family: var(--display); font-weight: 800; font-size: 0.9rem;
-  display: flex; align-items: center; gap: 0.55rem;
-  color: var(--text); text-decoration: none; white-space: nowrap;
+/* the section links fill the bar; on narrow screens they scroll sideways */
+.nav-links {
+  list-style: none; display: flex; align-items: center; gap: 0.2rem;
+  flex: 1; min-width: 0; position: relative;
+  padding: 6px 4px; margin: -6px 0;            /* room so the pressed pill is never clipped */
+  overflow-x: auto; overflow-y: hidden; scrollbar-width: none;
+  overscroll-behavior-x: contain; scroll-behavior: smooth;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 14px, #000 calc(100% - 14px), transparent);
+          mask-image: linear-gradient(90deg, transparent 0, #000 14px, #000 calc(100% - 14px), transparent);
 }
-.nav-brand::before {                     /* small pressed dot with the accent inside */
-  content: ""; width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0;
-  background: radial-gradient(circle at 50% 50%, var(--accent) 0 3px, transparent 3.5px), var(--bg);
-  box-shadow: var(--inset-sm);
-}
-.nav-brand:hover { color: var(--accent); }
-.nav-links { list-style: none; display: flex; gap: 0.15rem; flex: 1; justify-content: center; position: relative; }
-.nav-links li { position: static; }
+.nav-links::-webkit-scrollbar { display: none; }
+.nav-links li { position: static; flex-shrink: 0; }
+.nav-links li:first-child { margin-left: auto; }            /* centred when they fit, scrollable when not */
+.nav-links li:nth-last-child(2) { margin-right: auto; }
 .nav-a {
   position: relative; z-index: 1; display: inline-block; white-space: nowrap;
-  padding: 0.38rem 0.62rem; border-radius: 999px;
-  font-size: 0.8rem; font-weight: 500; color: var(--muted);
+  padding: 0.42rem 0.8rem; border-radius: 999px;
+  font-size: 0.82rem; font-weight: 500; color: var(--muted);
   text-decoration: none;
-  transition: color 0.25s ease, transform 0.15s ease;
+  transition: color 0.25s ease, transform 0.15s ease, box-shadow 0.25s ease;
 }
-.nav-a:hover { color: var(--text); text-decoration: none; }
-.nav-a:active { transform: scale(0.95); }
+.nav-a:hover { color: var(--text); text-decoration: none; box-shadow: var(--raise-sm); }   /* lifts a little */
+.nav-a.active:hover { box-shadow: none; }
+.nav-a:active { transform: scale(0.95); box-shadow: var(--inset-sm); }                       /* presses in */
+.nav-a.nav-pop { animation: navPress 0.4s var(--ease); }
 .nav-a.active { color: var(--accent); font-weight: 600; }
 .nav-links li.nav-ind {                  /* pressed-in pill that slides to the current section */
   position: absolute; left: 0; top: 0; height: 0; width: 0;
@@ -177,12 +180,6 @@ p  { color: var(--text); }
   transition: transform 0.45s var(--ease), width 0.45s var(--ease), height 0.45s var(--ease), opacity 0.3s ease;
 }
 .nav-tools { display: flex; align-items: center; gap: 0.6rem; margin-left: auto; flex-shrink: 0; }
-.nav-burger {
-  display: none; width: 40px; height: 40px; border: none; border-radius: 50%;
-  background: var(--bg); color: var(--text); font-size: 1.05rem; cursor: pointer;
-  box-shadow: var(--raise-sm); transition: box-shadow 0.2s ease;
-}
-.nav-burger:active, .nav-burger[aria-expanded="true"] { box-shadow: var(--inset-sm); }
 
 /* ── THEME TOGGLE (sun ↔ moon, based on the reference component) ── */
 .theme-toggle {
@@ -715,20 +712,17 @@ code {
 @keyframes swapIn  { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 @keyframes pop     { 0% { transform: scale(0.94); } 55% { transform: scale(1.04); } 100% { transform: scale(1); } }
 @keyframes zfloat  { 0%, 100% { opacity: 0.2; } 50% { opacity: 1; } }
+@keyframes navPress { 0% { transform: scale(0.93); } 60% { transform: scale(1.03); } 100% { transform: scale(1); } }
+/* when a nav link brings you to a section, its number badge presses in and settles back */
+@keyframes arrive {
+  0%   { box-shadow: var(--raise-sm); transform: scale(1); }
+  45%  { box-shadow: var(--inset); transform: scale(0.92); color: var(--accent-h); }
+  100% { box-shadow: var(--inset-sm); transform: scale(1); }
+}
+.section-badge.arrive { animation: arrive 0.75s var(--ease); }
+.section-header.arrive .section-title { animation: fadeIn 0.6s var(--ease); }
 
 /* ── RESPONSIVE ── */
-@media (max-width: 1300px) {
-  .nav-links {
-    display: none; flex-direction: column; gap: 0.3rem;
-    position: absolute; top: calc(100% + 0.7rem); left: 0; right: 0;
-    background: var(--bg); padding: 0.9rem; border-radius: var(--r-lg); box-shadow: var(--raise-lg);
-  }
-  .nav-links.open { display: flex; animation: fadeIn 0.25s ease both; }
-  .nav-links.open .nav-a { display: block; padding: 0.55rem 0.9rem; }
-  .nav-a.active { box-shadow: var(--inset-sm); }
-  .nav-links li.nav-ind { display: none; }
-  .nav-burger { display: block; }
-}
 @media (max-width: 960px) {
   .hero-grid { grid-template-columns: 1fr; gap: 2.4rem; }
   .hero-dial { order: 2; }
@@ -749,8 +743,8 @@ code {
 @media (max-width: 640px) {
   :root { --cm-cell: 38px; }
   .navbar { padding: 0.5rem 0.6rem 0; }
-  .nav-inner { padding: 0 0.45rem 0 1rem; height: 54px; }
-  .nav-brand { font-size: 0.78rem; }
+  .nav-inner { padding: 0 0.45rem; height: 54px; }
+  .nav-a { font-size: 0.78rem; padding: 0.4rem 0.7rem; }
   .stats-row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
   .card { padding: 1.3rem 1.2rem; border-radius: 20px; }
   .step-card, .method-card { padding-top: 3.8rem; }
@@ -763,7 +757,6 @@ code {
   .info-table td.label-cell { padding-top: 0.7rem; white-space: normal; }
   .to-top { right: 1rem; bottom: 1rem; }
 }
-@media (max-width: 420px) { .nav-brand span { display: none; } .nav-brand::after { content: "HAR · ES 335"; } }
 
 section[id], header[id] { scroll-margin-top: 84px; }
 
