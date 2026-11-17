@@ -1,0 +1,4 @@
+docs/index.html -linguist-documentation
+docs/css/** -linguist-documentation
+docs/js/main.js -linguist-documentation
+docs/js/figure3d.js -linguist-documentation
