@@ -206,14 +206,19 @@
         Tuned values below are what the grid search picked.</p>
       <div class="card-grid two-col">
         <div class="card method-card">
-          <div class="method-tag baseline">Baseline</div>
-          <h3>Majority class</h3>
-          <p>Always predicts the most common training class (laying). Accuracy 18%, macro-F1 0.05. Any useful model
-            has to beat this by a wide margin.</p>
-          <p class="method-note">Assumes nothing about the features, which is the point.</p>
+          <div class="method-tag baseline">Baselines</div>
+          <h3>Two baselines: a floor and a simple model</h3>
+          <p><strong>Majority class</strong> always predicts the most common training class (laying): accuracy 18%,
+            macro-F1 0.05. It is only a floor that shows the metric works.</p>
+          <p style="margin-top:0.6rem"><strong>8-feature logistic regression</strong> is the meaningful baseline: a
+            small linear model on 8 hand-picked, easy-to-read features (movement intensity, phone tilt, rotation,
+            frequency), tuned with the same grouped CV. It asks how far a few sensible features get before we use all
+            561. Answer: CV macro-F1 0.880, test 0.842.</p>
+          <p class="method-note">The full models must beat the simple model, not just the floor, to justify using all
+            561 features. The same 8-feature model runs in the demo below.</p>
         </div>
         <div class="card method-card">
-          <div class="method-tag baseline">Candidate model</div>
+          <div class="method-tag candidate">Candidate</div>
           <h3>Logistic regression</h3>
           <p>A linear classifier: one weighted sum of features per class, then softmax. Tests whether the engineered
             features are already linearly separable, and its weights are easy to inspect.</p>
@@ -229,7 +234,8 @@
           <p class="method-assume"><strong>Objective:</strong> each tree greedily picks splits that most reduce Gini
             impurity; the forest averages the trees. <strong>Assumes:</strong> classes can be carved out with
             feature thresholds, and the trees' errors are partly independent.</p>
-          <p class="method-note">Grid: max_features ∈ {sqrt, 0.1}, min_samples_leaf ∈ {1, 5} → picked sqrt, 5</p>
+          <p class="method-note">Grid: max_features ∈ {sqrt, 0.1}, min_samples_leaf ∈ {1, 5} → picked sqrt, 5
+            (min_samples_leaf = 5 is the largest value tried)</p>
         </div>
         <div class="card method-card highlight-card">
           <div class="method-tag candidate">Candidate</div>
@@ -238,7 +244,9 @@
             the method used in the original dataset paper.</p>
           <p class="method-assume"><strong>Objective:</strong> hinge loss plus an L2 penalty (widest margin).
             <strong>Assumes:</strong> windows close together in scaled feature space usually share a class.</p>
-          <p class="method-note">Grid: C ∈ {1, 10, 100}, γ ∈ {scale, 10⁻³, 10⁻⁴} → picked C = 100, γ = 10⁻⁴</p>
+          <p class="method-note">Grid: C ∈ {1, 10, 100}, γ ∈ {scale, 10⁻³, 10⁻⁴} → picked C = 100, γ = 10⁻⁴. Both
+            are at the edge of the grid (largest C, smallest γ), so a wider grid might help the SVM slightly; see
+            Limitations.</p>
         </div>
         <div class="card method-card">
           <div class="method-tag candidate">Candidate</div>
@@ -251,7 +259,7 @@
           <p class="method-note">Grid: k ∈ {5, 11, 21, 41}, uniform/distance weights → picked k = 21, distance</p>
         </div>
         <div class="card">
-          <h3>Why these five</h3>
+          <h3>Why these models</h3>
           <p>They span the main families: linear (LR), tree ensemble (RF), kernel/margin (SVM) and instance-based
             (k-NN). Deep learning on raw signals was out of scope; the features are already engineered, and the
             course rewards justified choices over complexity.</p>
@@ -325,7 +333,11 @@
           CV the two effectively tie. On the test people the SVM scored slightly higher (0.956 vs. 0.950),
           but resampling the test people shows that gap is not reliable: the LR − SVM difference is −0.006 with a 95%
           interval of [−0.021, +0.003], which includes zero. We keep logistic regression: it is simpler, faster, and
-          its weights can be read directly. All four real models beat the baseline by a wide margin.
+          its weights can be read directly. All four full models beat the majority baseline by a wide margin. Against
+          the simple 8-feature baseline, the full logistic regression is clearly better in CV (0.934 vs. 0.880) and on
+          test (0.950 vs. 0.842), so the other 553 features add real information, not just complexity. k-NN, however,
+          does <em>not</em> beat the simple baseline in CV (0.873 vs. 0.880): plain distance over all 561 features
+          carries over poorly to new people.
           <br><br><strong>What the interval can and cannot tell us:</strong> it shows how much the score depends on
           which people happen to be tested. It keeps the trained models fixed, so it ignores variation from which
           people were used for training, and with only 9 people its edges are themselves rough. It is not a formal
@@ -425,6 +437,10 @@
               the intervals).</li>
             <li><strong>Pre-scaled features.</strong> The authors' [−1, 1] scaling was not fit on training data only.</li>
             <li><strong>Engineered features only.</strong> We did not try models on the raw signals.</li>
+            <li><strong>Some best settings sit at the edge of their grid.</strong> SVM: C = 100 and γ = 10⁻⁴; random
+              forest: min_samples_leaf = 5. These models may be slightly under-tuned, so our "logistic regression and
+              SVM tie" conclusion is for the grids we searched. Changing settings moved CV scores by 0.02 at most, so
+              we expect any gain to be small, but we did not test a wider grid.</li>
             <li><strong>No causal claims.</strong> Feature importance shows what the models use, not what causes an
               activity to be recognised.</li>
           </ul>
@@ -486,7 +502,8 @@
           <p class="card-sub" style="margin:0.9rem 0 0">The figure acts out the model's top guess (drag it to
             turn the view). It is an illustration of the prediction, not part of the model. Things to try: start from <em>Standing</em> and slowly raise
             <em>gravity Y</em>; the prediction flips to sitting. That is the same feature direction behind most real
-            errors. Start from <em>Sitting</em> and push <em>gravity X</em> negative to make it laying.</p>
+            errors. Start from <em>Sitting</em> and lower <em>gravity X</em>: below about 0.17 the prediction becomes
+            laying.</p>
         </div>
       </div>
     </div>
@@ -548,11 +565,12 @@
           <p class="card-sub" style="margin-top:0.8rem;margin-bottom:0"><strong>3D character:</strong> "Ch03" character and animations from
             Adobe Mixamo, rendered with a small WebGL script written for this site.</p>
           <p class="card-sub" style="margin-top:1rem;margin-bottom:0"><strong>AI tools disclosure:</strong>
-            Gemini scaffolded the initial code and built a basic website. Claude was used to review the project,
-            error analysis and the 3d demo model rendering, and rebuild the website text and interactions. Claude also
-            helped improve the English of the team and "key decisions" sections from our own notes.
-            We have checked every number against the notebook, re-ran the full analysis, and take responsibility
-            for every result on this page.</p>
+            <strong>Gemini:</strong> drafting the initial code structure and a basic version of the website.
+            <strong>Claude:</strong> reviewing the project against the rubric; the error analysis; the 3D figure in
+            the demo; rebuilding the website interactions; and editing the website text and README, including
+            improving the English of the team and "key decisions" sections from our own notes.
+            We checked every number against the notebook, re-ran the full analysis, and take responsibility for
+            every result on this page.</p>
         </div>
       </div>
 
