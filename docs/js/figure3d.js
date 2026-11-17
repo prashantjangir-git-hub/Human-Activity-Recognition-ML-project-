@@ -247,8 +247,17 @@
     /* ---------- scene ---------- */
     const state = { clip: "idle", time: 0, prevClip: null, prevTime: 0, fade: 1 };
     const W8 = { floor: 1, walk: 0, up: 0, down: 0, chair: 0, bed: 0, camY: 0.9 };
-    const FLOOR = hex("#e2e8f0"), DASH = hex("#94a3b8"), STEP = hex("#e2e8f0"), WOOD = hex("#94a3b8"), SHEET = hex("#f8fafc"),
-          PILLOW = hex("#ffffff"), SHADOW = [0.06, 0.09, 0.16];
+    // scene colours come from the page theme (CSS variables), so the room follows light/dark mode
+    let FLOOR, DASH, STEP, WOOD, SHEET, PILLOW;
+    const SHADOW = [0.06, 0.09, 0.16];
+    function readSceneColors() {
+      const cs = getComputedStyle(document.documentElement);
+      const v = (name, fallback) => { const x = cs.getPropertyValue(name).trim(); return hex(/^#[0-9a-f]{6}$/i.test(x) ? x : fallback); };
+      FLOOR = v("--fig-floor", "#e2e8f0"); DASH = v("--fig-dash", "#94a3b8"); STEP = v("--fig-step", "#e2e8f0");
+      WOOD = v("--fig-wood", "#94a3b8"); SHEET = v("--fig-sheet", "#f8fafc"); PILLOW = v("--fig-pillow", "#ffffff");
+    }
+    readSceneColors();
+    window.addEventListener("themechange", () => { readSceneColors(); if (!running) draw(lastT); });
     let running = false, visible = true, last = 0, lastT = 0, accentRing = hex("#d97706"), accentTgt = hex("#d97706");
     const reduce = !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
     const t0 = performance.now();
