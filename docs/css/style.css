@@ -512,3 +512,12 @@ section[id], header[id] { scroll-margin-top: 60px; }
 .fig3d-hint.gone { opacity: 0; }
 @media (prefers-reduced-motion: reduce) { .fig3d-zzz span { animation: none; } }
 .fig3d-loading { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font: 500 0.8rem Inter, sans-serif; color: #94a3b8; }
+
+/* Per-student "key decisions" card */
+.defense-col h4 { font-size: 0.98rem; margin-bottom: 0.5rem; color: var(--text); }
+.defense-table .label-cell { width: 26%; white-space: normal; }
+.defense-table td { line-height: 1.55; }
+@media (max-width: 640px) {
+  .info-table td { display: block; width: auto; padding: 0.15rem 0.3rem; }
+  .info-table td.label-cell { padding-top: 0.6rem; white-space: normal; }
+}
