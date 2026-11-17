@@ -521,3 +521,29 @@ section[id], header[id] { scroll-margin-top: 60px; }
   .info-table td { display: block; width: auto; padding: 0.15rem 0.3rem; }
   .info-table td.label-cell { padding-top: 0.6rem; white-space: normal; }
 }
+
+/* ── Navbar: current-section highlight, hover underline, click feedback ── */
+.nav-a {
+  position: relative; display: inline-block;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+.nav-a::after {                               /* underline that grows from the left */
+  content: ""; position: absolute; left: 0.6rem; right: 0.6rem; bottom: 0.1rem; height: 2px;
+  border-radius: 2px; background: var(--accent);
+  transform: scaleX(0); transform-origin: left; transition: transform 0.25s ease;
+}
+.nav-a:hover::after { transform: scaleX(0.6); }
+.nav-a:active { transform: scale(0.94); }
+.nav-a.active { color: var(--accent); background: #eff6ff; }
+.nav-a.active::after { transform: scaleX(1); }
+.nav-a.active:hover { background: #dbeafe; }
+.nav-a.nav-pop { animation: navPop 0.35s ease; }
+@keyframes navPop { 0% { transform: scale(0.94); } 60% { transform: scale(1.06); } 100% { transform: scale(1); } }
+@media (max-width: 1180px) {
+  .nav-links.open .nav-a { display: block; }
+  .nav-links.open .nav-a::after { left: 0.5rem; right: auto; width: 1.2rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-a, .nav-a::after { transition: none; }
+  .nav-a.nav-pop { animation: none; }
+}
