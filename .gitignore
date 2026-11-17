@@ -1,0 +1,7 @@
+# Dataset: download from https://archive.ics.uci.edu/dataset/240 (see README)
+UCI HAR Dataset/
+*.zip
+__MACOSX/
+.DS_Store
+.ipynb_checkpoints/
+__pycache__/
