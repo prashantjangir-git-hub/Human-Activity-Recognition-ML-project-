@@ -39,6 +39,7 @@ function initChrome() {
   const links = $("navLinks");
   $("navBurger")?.addEventListener("click", () => links.classList.toggle("open"));
   links.querySelectorAll("a").forEach(a => a.addEventListener("click", () => links.classList.remove("open")));
+  initScrollSpy(links);
 
   const counterObs = new IntersectionObserver(entries => {
     for (const e of entries) {
@@ -55,6 +56,37 @@ function initChrome() {
     for (const e of entries) if (e.isIntersecting) { e.target.classList.add("visible"); fadeObs.unobserve(e.target); }
   }, { threshold: 0.05 });
   document.querySelectorAll(".card, .stat-card").forEach(el => { el.classList.add("animate-on-scroll"); fadeObs.observe(el); });
+}
+
+/* ── Navbar: highlight the link of the section currently on screen ── */
+function initScrollSpy(links) {
+  const navLinks = [...links.querySelectorAll("a.nav-a")];
+  const items = navLinks.map(a => ({ a, sec: document.getElementById(a.getAttribute("href").slice(1)) })).filter(x => x.sec);
+  let current = null, lockUntil = 0, ticking = false;
+  const setActive = a => {
+    if (a === current) return;
+    current?.classList.remove("active"); current?.removeAttribute("aria-current");
+    current = a;
+    if (a) { a.classList.add("active"); a.setAttribute("aria-current", "true"); }
+  };
+  const update = () => {
+    ticking = false;
+    if (Date.now() < lockUntil) return;          // a click is still smooth-scrolling to its target
+    const y = window.scrollY + 90;                // just below the sticky header
+    const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+    let found = null;
+    for (const it of items) if (it.sec.offsetTop <= y) found = it.a;
+    setActive(atBottom ? items[items.length - 1].a : found);
+  };
+  window.addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+  window.addEventListener("resize", update);
+  window.addEventListener("scrollend", () => { lockUntil = 0; update(); });
+  navLinks.forEach(a => a.addEventListener("click", () => {
+    setActive(a);                                 // highlight the clicked link right away
+    lockUntil = Date.now() + 1200;                // don't flicker through the sections passed on the way
+    a.classList.remove("nav-pop"); void a.offsetWidth; a.classList.add("nav-pop");
+  }));
+  update();
 }
 
 /* ── Data section ── */
@@ -108,7 +140,7 @@ function renderLeak(rows) {
 }
 
 /* ── Results table ── */
-function renderResults(rows) {
+function renderResults(rows, dm) {
   const sel = rows.find(r => r.Selected);
   $("resultsTableBody").innerHTML = rows.map(r => `
     <tr class="${r.Selected ? "best-row" : ""}">
@@ -122,7 +154,7 @@ function renderResults(rows) {
       <td>${f3(r["Train Macro-F1"])}</td>
     </tr>`).join("");
   $("heroResult").innerHTML = `Selected model: <strong>${esc(sel.Model)}</strong> · test macro-F1 <strong>${f3(sel["Test Macro-F1"])}</strong>
-    on 9 unseen people (95% interval ${f3(sel["CI low"])}–${f3(sel["CI high"])}) · baseline ${f3(rows[0]["Test Macro-F1"])}`;
+    on 9 unseen people (95% interval ${f3(sel["CI low"])}–${f3(sel["CI high"])}) · majority baseline ${f3(rows[0]["Test Macro-F1"])}${dm ? ` · simple 8-feature baseline ${f3(dm.test_f1)}` : ""}`;
 }
 
 /* ── Confusion matrix explorer ── */
@@ -489,7 +521,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const [cls, pca, cmp, cm, fi, ps, leak, err, dm] = await Promise.all([
       "class_distribution.json", "pca_clusters.json", "model_comparison.json", "confusion_matrices.json",
       "feature_importance.json", "per_subject.json", "cv_leakage.json", "error_analysis.json", "demo_model.json"].map(loadJSON));
-    renderClassDist(cls); renderPCA(pca); renderLeak(leak); renderResults(cmp);
+    renderClassDist(cls); renderPCA(pca); renderLeak(leak); renderResults(cmp, dm);
     initCM(cm, cmp.find(r => r.Selected).Model); initFI(fi);
     renderErrorPairs(err); renderSubjects(ps); initHist(err); initDemo(dm);
   } catch (e) {
