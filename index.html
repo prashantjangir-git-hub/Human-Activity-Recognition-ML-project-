@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Human Activity Recognition · ES 335 ML Project</title>
+  <meta name="description"
+    content="ES 335 Machine Learning project: classifying six physical activities of unseen people from smartphone sensor windows (UCI HAR), with subject-grouped evaluation, error analysis and an interactive demo." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
+    rel="stylesheet" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22%3E%3Crect width=%2216%22 height=%2216%22 rx=%223%22 fill=%22%232563eb%22/%3E%3C/svg%3E" />
+  <meta name="color-scheme" content="light dark" />
+  <link rel="canonical" href="https://prashantjangir-git-hub.github.io/Human-Activity-Recognition-ML-project-/" />
+  <!-- link previews (LinkedIn, WhatsApp, Slack, X, …) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Human Activity Recognition · ES 335 ML Project" />
+  <meta property="og:description"
+    content="Classifying six activities of unseen people from 2.56 s of phone sensor data (UCI HAR): test macro-F1 0.950 on 9 held-out people, with an interactive confusion matrix and an in-browser demo." />
+  <meta property="og:url" content="https://prashantjangir-git-hub.github.io/Human-Activity-Recognition-ML-project-/" />
+  <meta property="og:image" content="https://prashantjangir-git-hub.github.io/Human-Activity-Recognition-ML-project-/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Human Activity Recognition: test macro-F1 0.950 on 9 unseen people" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <script>
+    /* Pick the theme before the page paints, so there is no flash: saved choice, else the system setting. */
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem("har-theme"); } catch (e) {}
+      if (t !== "light" && t !== "dark") t = window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.setAttribute("data-theme", t);
+    })();
+  </script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <nav class="navbar" id="navbar" aria-label="Sections">
+    <div class="nav-inner">
+      <!-- small screens: the links fold into a menu; this button shows the current section -->
+      <button class="nav-menu-btn" id="navMenuBtn" type="button" aria-expanded="false" aria-controls="navLinks">
+        <span class="nav-burger" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span class="nav-current" id="navCurrent">Sections</span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#question" class="nav-a">Question</a></li>
+        <li><a href="#data" class="nav-a">Data</a></li>
+        <li><a href="#preprocessing" class="nav-a">Preprocessing</a></li>
+        <li><a href="#methods" class="nav-a">Methods</a></li>
+        <li><a href="#evaluation" class="nav-a">Evaluation</a></li>
+        <li><a href="#results" class="nav-a">Results</a></li>
+        <li><a href="#errors" class="nav-a">Errors &amp; limits</a></li>
+        <li><a href="#demo" class="nav-a">Try it</a></li>
+        <li><a href="#conclusion" class="nav-a">Conclusion</a></li>
+        <li><a href="#reproduce" class="nav-a">Reproduce</a></li>
+        <li class="nav-ind" id="navInd" aria-hidden="true"></li>
+      </ul>
+      <div class="nav-tools">
+        <!-- theme toggle, based on the Uiverse.io toggle by mobinkakei -->
+        <label class="nt-label" id="themeToggle" title="Switch to dark mode">
+          <span class="nt-toggle">
+            <input class="nt-state" type="checkbox" id="themeInput" aria-label="Dark mode" />
+            <span class="nt-indicator"></span>
+          </span>
+        </label>
+      </div>
+    </div>
+  </nav>
+
+  <div class="load-error" id="loadError" hidden>
+    The result data could not be loaded, so charts and tables are empty. Check that <code>docs/data/data.js</code>
+    exists; re-running <code>analysis.ipynb</code> recreates it.
+  </div>
+
+  <main id="main" tabindex="-1">
+
+  <!-- HERO -->
+  <header class="hero" id="top">
+    <div class="container hero-grid">
+      <div class="hero-content">
+        <p class="hero-eyebrow">ES 335 · Machine Learning · 2026</p>
+        <!-- neumorphic heading: each word is raised out of the page; it sinks back in as you scroll away -->
+        <h1 class="hero-title" aria-label="Human Activity Recognition">
+          <span class="ht-word" style="--i:0" aria-hidden="true">Human</span>
+          <span class="ht-word" style="--i:1" aria-hidden="true">Activity</span>
+          <span class="ht-word ht-accent" style="--i:2" aria-hidden="true">Recognition</span>
+        </h1>
+        <p class="hero-sub">Can 2.56 seconds of phone sensor data tell what a <em>new</em> person is doing? We train
+          classical models on the UCI HAR dataset and test them on 9 people the models never saw.</p>
+        <div class="hero-result" id="heroResult">Loading results…</div>
+        <div class="hero-meta">
+          <span class="pill">UCI HAR Dataset</span>
+          <span class="pill">10,299 windows</span>
+          <span class="pill">30 people</span>
+          <span class="pill">561 features</span>
+          <span class="pill">6 activities</span>
+        </div>
+        <a href="#question" class="btn-hero">Read the project <span class="arrow" aria-hidden="true">↓</span></a>
+      </div>
+      <div class="hero-dial" aria-hidden="true">
+        <div class="dial-outer"><div class="dial-inner"><canvas id="dialCanvas"></canvas></div></div>
+        <div class="dial-chip" title="An illustrative accelerometer trace, not real data">
+          <span class="dot" id="dialDot"></span><span class="dial-act" id="dialAct">Walking</span><span class="muted">sample signal</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 01 QUESTION -->
+  <section class="section" id="question">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-badge">01</span>
+        <h2 class="section-title">Research question</h2>
+      </div>
+      <div class="card-grid two-col">
+        <div class="card">
+          <h3>The question</h3>
+          <p>Given a <strong>2.56-second window</strong> of accelerometer and gyroscope readings from a phone worn at
+            the waist, can we tell which of <strong>six activities</strong> a person is doing, <strong>if we have
+              never seen that person before</strong>?</p>
+          <ul class="activity-list">
+            <li><span class="dot dot-walk"></span>Walking</li>
+            <li><span class="dot dot-up"></span>Walking upstairs</li>
+            <li><span class="dot dot-down"></span>Walking downstairs</li>
+            <li><span class="dot dot-sit"></span>Sitting</li>
+            <li><span class="dot dot-stand"></span>Standing</li>
+            <li><span class="dot dot-lay"></span>Laying</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Setup</h3>
+          <table class="info-table">
+            <tr><td class="label-cell">One row</td><td>One window: 128 readings at 50 Hz, overlapping the next window by 50%</td></tr>
+            <tr><td class="label-cell">Target</td><td>Activity label, 6 classes</td></tr>
+            <tr><td class="label-cell">When we predict</td><td>At the end of the window, using only the 561 features computed from that window</td></tr>
+            <tr><td class="label-cell">Main metric</td><td>Macro-F1 (average F1 over the 6 classes), plus accuracy</td></tr>
+            <tr><td class="label-cell">Limits of the claim</td><td>Lab recordings, one phone model (Samsung Galaxy S II), 30 adults aged 19–48. We claim generalisation to new people <em>in this setting</em>, not to everyday life or other phones.</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 DATA -->
+  <section class="section section-alt" id="data">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-badge">02</span>
+        <h2 class="section-title">Data understanding</h2>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-num" data-target="10299">10,299</div><div class="stat-label">Windows</div></div>
+        <div class="stat-card"><div class="stat-num" data-target="7352">7,352</div><div class="stat-label">Train (21 people)</div></div>
+        <div class="stat-card"><div class="stat-num" data-target="2947">2,947</div><div class="stat-label">Test (9 people)</div></div>
+        <div class="stat-card"><div class="stat-num" data-target="561">561</div><div class="stat-label">Features</div></div>
+        <div class="stat-card"><div class="stat-num" data-target="30">30</div><div class="stat-label">People</div></div>
+      </div>
+
+      <div class="card-grid two-col" style="margin-top:2rem;">
+        <div class="card">
+          <h3>Class balance</h3>
+          <p class="card-sub">Windows per activity in train (dark) and test (light). The largest class is 1.43× the
+            smallest, so the classes are close to balanced.</p>
+          <div class="bar-chart" id="classDistChart"></div>
+        </div>
+        <div class="card">
+          <h3>Where the 561 features come from</h3>
+          <p class="card-sub">Each window's raw signals are summarised into statistics (mean, std, max, energy,
+            entropy, …) by the dataset authors. Number of features per signal family:</p>
+          <div class="bar-chart" id="featureGroups"></div>
+        </div>
+      </div>
+
+      <div class="card-grid three-col" style="margin-top:1.2rem;">
+        <div class="card">
+          <h3>Source and access</h3>
+          <p>UCI Machine Learning Repository (Anguita et al., 2013), free to use and share under CC BY 4.0. 30 volunteers
+            performed the activities in a lab with the phone on their waist. No personal information beyond a subject
+            number. The authors also filtered the raw signals and split acceleration into body and gravity parts before
+            computing features.</p>
+        </div>
+        <div class="card">
+          <h3>Quality checks</h3>
+          <p>No missing values. All features were already scaled to [−1, 1] by the authors. 42 feature names appear
+            more than once in <code>features.txt</code>, so we renamed the copies.</p>
+        </div>
+        <div class="card">
+          <h3>Two things that shape evaluation</h3>
+          <p>Each person contributes 281–409 windows that overlap by 50%, so windows from one person are <strong>not
+              independent</strong>. And 2,281 feature pairs have |correlation| &gt; 0.95, so importance scores get
+            split across near-copies.</p>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:1.2rem;">
+        <h3>PCA: the 561 features squeezed into 2 dimensions</h3>
+        <p class="card-sub">Fit on training data only; 2,000 sampled windows. Moving and still activities separate
+          clearly along PC1. The three still postures overlap in this 2D view, and <strong>sitting and standing overlap
+          most</strong>. That overlap is where most errors end up later (the full models use all 561 dimensions, where
+          laying separates well).</p>
+        <canvas id="pcaCanvas" width="900" height="420" style="width:100%;"></canvas>
+        <p class="canvas-note" id="pcaNote">Loading…</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 PREPROCESSING -->
+  <section class="section" id="preprocessing">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-badge">03</span>
+        <h2 class="section-title">Preprocessing</h2>
+      </div>
+      <div class="card-grid three-col">
+        <div class="card step-card">
+          <div class="step-num">1</div>
+          <h3>Keep the people separate</h3>
+          <p>We use the dataset's own split: 21 people for training, 9 different people for testing. No person appears
+            in both. The test set is used once, at the very end.</p>
+        </div>
+        <div class="card step-card">
+          <div class="step-num">2</div>
+          <h3>Scaling inside a pipeline</h3>
+          <p>Logistic regression, SVM and k-NN are sensitive to feature scale, so they get a
+            <code>StandardScaler</code>. It sits inside a scikit-learn <code>Pipeline</code>, so it is re-fit on the
+            training part of every CV fold and never sees validation or test data.</p>
+        </div>
+        <div class="card step-card">
+          <div class="step-num">3</div>
+          <h3>Nothing to impute</h3>
+          <p>No missing values, so no imputation. The one thing we could not control: the authors scaled features to
+            [−1, 1] before splitting, probably using all 30 people. It is a fixed linear rescale, so the effect should
+            be small, but it is a mild leak we list as a limitation.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 METHODS -->
+  <section class="section section-alt" id="methods">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-badge">04</span>
+        <h2 class="section-title">Baseline &amp; methods</h2>
+      </div>
+      <p class="section-lead">Every model was tuned with the same subject-grouped cross-validation (next section).
+        Tuned values below are what the grid search picked.</p>
+      <div class="card-grid two-col">
+        <div class="card method-card">
+          <div class="method-tag baseline">Baselines</div>
+          <h3>Two baselines: a floor and a simple model</h3>
+          <p><strong>Majority class</strong> always predicts the most common training class (laying): accuracy 18%,
+            macro-F1 0.05. It is only a floor that shows the metric works.</p>
+          <p style="margin-top:0.6rem"><strong>8-feature logistic regression</strong> is the meaningful baseline: a
+            small linear model on 8 hand-picked, easy-to-read features (movement intensity, phone tilt, rotation,
+            frequency), tuned with the same grouped CV. It asks how far a few sensible features get before we use all
+            561. Answer: CV macro-F1 0.880, test 0.842.</p>
+          <p class="method-note">The full models must beat the simple model, not just the floor, to justify using all
+            561 features. The same 8-feature model runs in the demo below.</p>
+        </div>
+        <div class="card method-card">
+          <div class="method-tag candidate">Candidate</div>
+          <h3>Logistic regression</h3>
+          <p>A linear classifier: one weighted sum of features per class, then softmax. Tests whether the engineered
+            features are already linearly separable, and its weights are easy to inspect.</p>
+          <p class="method-assume"><strong>Objective:</strong> minimise cross-entropy plus an L2 penalty.
+            <strong>Assumes:</strong> each class's log-odds are a linear function of the features.</p>
+          <p class="method-note">Grid: C ∈ {0.01, 0.1, 1, 10} → picked C = 0.1 (fairly strong regularisation)</p>
+        </div>
+        <div class="card method-card highlight-card">
+          <div class="method-tag candidate">Candidate</div>
+          <h3>Random forest</h3>
+          <p>200 decision trees on bootstrap samples, each split choosing from a random subset of features. Captures
+            non-linear thresholds, copes with redundant features, needs no scaling.</p>
+          <p class="method-assume"><strong>Objective:</strong> each tree greedily picks splits that most reduce Gini
+            impurity; the forest averages the trees. <strong>Assumes:</strong> classes can be carved out with
+            feature thresholds, and the trees' errors are partly independent.</p>
+          <p class="method-note">Grid: max_features ∈ {sqrt, 0.1}, min_samples_leaf ∈ {1, 5} → picked sqrt, 5
+            (min_samples_leaf = 5 is the largest value tried)</p>
+        </div>
+        <div class="card method-card highlight-card">
+          <div class="method-tag candidate">Candidate</div>
+          <h3>SVM (RBF kernel)</h3>
+          <p>Finds the boundary with the widest margin between classes; the RBF kernel lets that boundary curve. It is
+            the method used in the original dataset paper.</p>
+          <p class="method-assume"><strong>Objective:</strong> hinge loss plus an L2 penalty (widest margin).
+            <strong>Assumes:</strong> windows close together in scaled feature space usually share a class.</p>
+          <p class="method-note">Grid: C ∈ {1, 10, 100}, γ ∈ {scale, 10⁻³, 10⁻⁴} → picked C = 100, γ = 10⁻⁴. Both
+            are at the edge of the grid (largest C, smallest γ), so a wider grid might help the SVM slightly; see
+            Limitations.</p>
+        </div>
+        <div class="card method-card">
+          <div class="method-tag candidate">Candidate</div>
+          <h3>k-nearest neighbours</h3>
+          <p>No training: a window gets the majority label of its closest training windows. Checks whether "nearby in
+            feature space" means "same activity" across people.</p>
+          <p class="method-assume"><strong>Objective:</strong> none to fit; it votes among neighbours.
+            <strong>Assumes:</strong> Euclidean distance over 561 scaled features is meaningful, which gets harder as
+            dimensions grow.</p>
+          <p class="method-note">Grid: k ∈ {5, 11, 21, 41}, uniform/distance weights → picked k = 21, distance</p>
+        </div>
+        <div class="card">
+          <h3>Why these models</h3>
+          <p>They span the main families: linear (LR), tree ensemble (RF), kernel/margin (SVM) and instance-based
+            (k-NN). Deep learning on raw signals was out of scope; the features are already engineered, and the
+            course rewards justified choices over complexity.</p>
+          <p style="margin-top:0.7rem">One assumption <em>all</em> of them make is that training windows are
+            independent. They are not (overlapping windows from the same person), which is why we validate and
+            estimate uncertainty per person.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 EVALUATION -->
+  <section class="section" id="evaluation">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-badge">05</span>
+        <h2 class="section-title">Evaluation design</h2>
+      </div>
+      <div class="card-grid two-col">
+        <div class="card">
+          <h3>The protocol (fixed before comparing models)</h3>
+          <ul class="eval-list">
+            <li>Split the 21 training people into 5 groups; each CV fold validates on 4–5 people the fold's model did
+              not train on (<code>GroupKFold</code>)</li>
+            <li>Tune every model's settings by grid search on this grouped CV</li>
+            <li>Pick the final model by <strong>CV macro-F1</strong>, before looking at the test set</li>
+            <li>Retrain on all 21 training people, then score the 9 test people <strong>once</strong></li>
+            <li>Uncertainty: resample the 9 test <em>people</em> with replacement 2,000 times and recompute macro-F1
+              (a subject-level bootstrap)</li>
+          </ul>
+          <p class="card-sub" style="margin-top:1rem;margin-bottom:0">Why macro-F1: it averages over activities, so a
+            model cannot score well by being good only at the common classes.</p>
+        </div>
+        <div class="card">
+          <h3>Why grouping by person matters</h3>
+          <p class="card-sub">The same tuned models scored with an ordinary random K-fold (windows shuffled) vs. our
+            person-grouped K-fold. Random splits put the same person, and overlapping windows, in both training and
+            validation.</p>
+          <div id="leakChart" class="leak-chart"></div>
+          <p class="card-sub" style="margin-top:0.8rem;margin-bottom:0">Random K-fold overstates performance on new people by
+            5–8 points of macro-F1. An earlier version of this project used random K-fold, which is why its CV scores
+            (~0.98) were far above its test scores.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 RESULTS -->
+  <section class="section section-alt" id="results">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-badge">06</span>
+        <h2 class="section-title">Results</h2>
+      </div>
+
+      <div class="card">
+        <h3>Model comparison</h3>
+        <p class="card-sub">CV = person-grouped cross-validation on the 21 training people (used to choose). Test = the
+          9 held-out people (reported once). 95% interval from the subject-level bootstrap.</p>
+        <p class="scroll-hint" hidden>Scroll sideways to see every column →</p>
+        <div class="table-wrap">
+          <table class="results-table">
+            <thead>
+              <tr><th>Model</th><th>CV macro-F1</th><th>Test macro-F1</th><th>95% interval <span class="th-scale">scale 0.80–1.00</span></th><th>Test accuracy</th><th>Train macro-F1</th></tr>
+            </thead>
+            <tbody id="resultsTableBody"><tr><td colspan="6" class="muted-cell">Loading…</td></tr></tbody>
+          </table>
+        </div>
+        <div class="callout">
+          <p class="takeaway"><strong>Which model is best?</strong> Logistic regression and the SVM effectively tie.
+            We keep logistic regression: it was chosen by CV before testing, it is simpler and faster, and its weights
+            can be read directly.</p>
+          <ul class="eval-list callout-list">
+            <li><strong>In CV</strong> logistic regression leads the SVM by 0.002 (0.934 vs. 0.932), tiny next to the
+              fold-to-fold spread (±0.04).</li>
+            <li><strong>On test</strong> the SVM scored slightly higher (0.956 vs. 0.950), but resampling the test people
+              gives an LR − SVM difference of −0.006 with a 95% interval of [−0.021, +0.003], which includes zero.</li>
+            <li><strong>Against the baselines</strong> all four full models beat the majority baseline by a wide margin,
+              and full logistic regression clearly beats the simple 8-feature model (CV 0.934 vs. 0.880, test 0.950
+              vs. 0.842), so the other 553 features add real information, not just complexity.</li>
+            <li><strong>k-NN is the exception:</strong> it does <em>not</em> beat the simple baseline in CV (0.873 vs.
+              0.880). Plain distance over all 561 features carries over poorly to new people.</li>
+          </ul>
+          <details class="more">
+            <summary>What the interval can and cannot tell us</summary>
+            <p>It shows how much the score depends on which people happen to be tested. It keeps the trained models
+              fixed, so it ignores variation from which people were used for training, and with only 9 people its
+              edges are themselves rough. It is not a formal significance test.</p>
+          </details>
+        </div>
+        <p class="card-sub" style="margin-top:0.8rem;margin-bottom:0">Train scores near 1.0 against CV ≈ 0.87–0.93 show every model fits the
+          training people much better than new people. The gap looks like <em>person-to-person variation</em> rather than a
+          tuning problem: changing a model's settings moves its CV score by about 0.02 at most, while changing which
+          people are held out moves it by 0.08–0.13, and the same fold (people 14, 15, 19, 25) is the hardest for every
+          model. The score of every setting and fold is in
+          <a href="https://github.com/ToothlessSyntax/Machine-Learning-Project-/blob/main/results/grid_search_results.csv"><code>results/grid_search_results.csv</code></a>.
+          (k-NN with distance weighting scores 1.0 on train by construction.)</p>
+      </div>
+
+      <div class="card" style="margin-top:1.5rem;">
+        <h3>Interactive confusion matrix</h3>
+        <p class="card-sub">Pick a model, then <strong>click any cell</strong>. Rows are true activities, columns are
+          predictions. The panel shows the cell's share of the row and the same cell for every model, so you can see
+          whether a mistake is specific to one model or shared by all of them.</p>
+        <div class="cm-controls">
+          <label for="modelSelect">Model:</label>
+          <select id="modelSelect" class="styled-select"></select>
+        </div>
+        <div class="cm-layout">
+          <div class="cm-left">
+            <div id="cmGrid" class="cm-grid"></div>
+            <div class="cm-axis-label">Predicted activity →</div>
+          </div>
+          <div class="cm-right">
+            <div id="cmDetail" class="cm-detail"><p class="cm-hint">Click a cell to inspect it. Try SITTING → STANDING.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:1.5rem;">
+        <h3>What the models rely on</h3>
+        <p class="card-sub">Many features are near-duplicates, so a single feature's rank is unreliable: importance gets
+          split between correlated copies. The <strong>by signal group</strong> view adds those copies up and is the
+          more trustworthy one. This shows association with the label, not cause.</p>
+        <div class="fi-controls">
+          <button class="btn-toggle active" data-fi="Random Forest|top">Random forest · top 20</button>
+          <button class="btn-toggle" data-fi="Logistic Regression|top">Logistic regression · top 20</button>
+          <button class="btn-toggle" data-fi="both|groups">By signal group</button>
+        </div>
+        <div id="fiChart" class="bar-chart" style="margin-top:1rem;"></div>
+        <p class="card-sub" id="fiNote" style="margin-top:0.8rem;margin-bottom:0"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 ERRORS -->
+  <section class="section" id="errors">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-badge">07</span>
+        <h2 class="section-title">Errors &amp; limitations</h2>
+      </div>
+
+      <div class="card-grid two-col">
+        <div class="card">
+          <h3>Which mistakes the selected model makes</h3>
+          <p class="card-sub">Logistic regression gets 148 of 2,947 test windows wrong. The six most common mix-ups:</p>
+          <div id="errorPairs" class="bar-chart"></div>
+          <p class="card-sub" style="margin-top:0.9rem;margin-bottom:0">Sitting → standing alone is 39% of all errors. The
+            stair errors come from walking activities that look alike over 2.56 s. Laying → standing (14 windows) is
+            unusual: random forest and SVM classify every laying window correctly.</p>
+        </div>
+        <div class="card">
+          <h3>Errors depend on the person</h3>
+          <p class="card-sub">Macro-F1 for each test person. <strong>Click a bar</strong> for details.</p>
+          <div id="subjChart" class="subj-chart"></div>
+          <div id="subjDetail" class="subj-detail">Subjects 10 and 9 account for 53% of all sitting/standing confusions.</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:1.2rem;">
+        <h3>A closer look at sitting vs. standing</h3>
+        <p class="card-sub">The feature that best separates sitting from standing in the training data is
+          <code>tGravityAcc-max()-Y</code>, which reflects how the phone is tilted relative to gravity. Below is where
+          test windows fall on it. Toggle groups to compare.</p>
+        <div class="fi-controls" id="histToggles"></div>
+        <canvas id="histCanvas" width="900" height="300" style="width:100%;margin-top:0.6rem;"></canvas>
+        <p class="card-sub" style="margin-top:0.8rem;margin-bottom:0">The median wrongly classified sitting window (−0.105)
+          sits on the <em>standing</em> side of the midpoint between the two correct groups (−0.078), and wrongly
+          classified standing windows (−0.062) sit on the sitting side. So these errors are windows whose phone
+          orientation genuinely resembles the other posture. A plausible cause is how upright a person sits or how
+          the phone was worn, but the data cannot confirm that.</p>
+      </div>
+
+      <div class="card-grid two-col" style="margin-top:1.2rem;">
+        <div class="card" id="limitations">
+          <h3>Limitations</h3>
+          <ul class="plain-list">
+            <li><strong>Lab data, one phone, 30 adults.</strong> Everyday use (phone in a pocket or bag, other devices,
+              older people) would likely be harder.</li>
+            <li><strong>Only 9 test people.</strong> Scores move by several points depending on who is tested (see
+              the intervals).</li>
+            <li><strong>Pre-scaled features.</strong> The authors' [−1, 1] scaling was not fit on training data only.</li>
+            <li><strong>Engineered features only.</strong> We did not try models on the raw signals.</li>
+            <li><strong>Some best settings sit at the edge of their grid.</strong> SVM: C = 100 and γ = 10⁻⁴; random
+              forest: min_samples_leaf = 5. These models may be slightly under-tuned, so our "logistic regression and
+              SVM tie" conclusion is for the grids we searched. Changing settings moved CV scores by 0.02 at most, so
+              we expect any gain to be small, but we did not test a wider grid.</li>
+            <li><strong>No causal claims.</strong> Feature importance shows what the models use, not what causes an
+              activity to be recognised.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>What we would try next</h3>
+          <ul class="plain-list">
+            <li>Per-person calibration: a few labelled seconds from a new user might fix the sitting/standing offset.</li>
+            <li>Smoothing predictions over consecutive windows, since activities last longer than 2.56 s.</li>
+            <li>Testing on a free-living dataset to see how far the lab result carries.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 DEMO -->
+  <section class="section section-alt" id="demo">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-badge">08</span>
+        <h2 class="section-title">Try the classifier</h2>
+      </div>
+      <div class="card demo-card">
+        <p class="card-sub">This runs a <strong>real logistic regression</strong> in your browser. Its weights were
+          exported from the notebook, and it uses 8 interpretable features instead of 561 so the sliders mean
+          something. It scores <strong id="demoF1">…</strong> macro-F1 on the test people, against 0.950 for the full
+          model, so expect more mistakes. Start from a typical window, or load a real one from a test person, including windows the full model got
+          wrong.</p>
+
+        <div class="demo-presets">
+          <strong>Typical window (training median):</strong>
+          <span id="presetButtons"></span>
+        </div>
+        <div class="demo-presets">
+          <strong>Real test window:</strong>
+          <select id="windowSelect" class="styled-select"></select>
+          <button class="btn-preset" id="randomWindow">Random window</button>
+          <span class="muted-small">✗ = the full 561-feature model got this window wrong</span>
+        </div>
+        <div id="windowInfo" class="window-info" hidden></div>
+
+        <div class="sliders-grid" id="slidersGrid"></div>
+
+        <div class="demo-output">
+          <div class="demo-output-grid">
+            <div class="figure-wrap">
+              <div id="figureStage" class="figure-stage"></div>
+              <p id="figureCaption" class="fig-caption"></p>
+            </div>
+            <div>
+              <div class="pred-result">
+                <span class="pred-label">Predicted:</span>
+                <span class="pred-value" id="predValue">—</span>
+              </div>
+              <div class="conf-bars" id="confBars"></div>
+            </div>
+          </div>
+          <p class="card-sub" style="margin:0.9rem 0 0">The figure acts out the model's top guess (drag it to
+            turn the view). It is an illustration of the prediction, not part of the model. Things to try: start from <em>Standing</em> and slowly raise
+            <em>gravity Y</em>; the prediction flips to sitting. That is the same feature direction behind most real
+            errors. Start from <em>Sitting</em> and lower <em>gravity X</em>: below about 0.17 the prediction becomes
+            laying.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 CONCLUSION -->
+  <section class="section" id="conclusion">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-badge">09</span>
+        <h2 class="section-title">Conclusion</h2>
+      </div>
+      <div class="card conclusion-card">
+        <ul class="conclusion-list">
+          <li>For new people in this lab setting, a <strong>regularised logistic regression on the engineered
+              features</strong> recognises the six activities with test macro-F1 0.950 (95% interval 0.915–0.976),
+            against 0.05 for the baseline. Non-linear models did not reliably do better.</li>
+          <li><strong>How you validate matters as much as which model you pick.</strong> Splitting by window instead
+            of by person inflates scores by 5–8 points.</li>
+          <li>The remaining errors are mostly <strong>sitting ↔ standing</strong>, concentrated in two people, and
+            caused by windows whose phone orientation looks like the other posture.</li>
+          <li><strong>Phone orientation (gravity) features dominate</strong> what the models use; an 8-feature model
+            already reaches 0.842.</li>
+          <li>We would not deploy this outside the lab without testing on free-living data and other devices.</li>
+        </ul>
+      </div>
+
+      <div class="card-grid" style="margin-top:1.5rem;">
+        <div class="card">
+          <h3>Team &amp; contributions</h3>
+          <table class="info-table team-table">
+            <tr><td class="label-cell">Bhanavath Charan Tej Naik<br><span class="muted-small">25110073</span></td>
+              <td>Chose the question and the dataset, and wrote the proposal. Loaded the data and did the quality
+                checks, the class-balance count and the PCA plot. Built the first comparison of the five models,
+                with their confusion matrices. Replaced the window-level cross-validation with person-grouped
+                cross-validation (<code>GroupKFold</code>), ran the grid search for every model on it, and measured
+                how much the old split had inflated the scores.</td></tr>
+            <tr><td class="label-cell">Prashant<br><span class="muted-small">25110245</span></td>
+              <td>Found the main problem in our first version: its cross-validation shuffled windows, so the same
+                person appeared in both the training and the validation folds. Designed the website and built the
+                confusion-matrix and feature-importance explorers. Computed the feature importance, including the
+                signal-group view. Estimated uncertainty with a bootstrap over test people, including the
+                logistic regression vs. SVM comparison. Broke the errors down by test person. Built the 8-feature
+                demo model and the browser for real test windows.</td></tr>
+            <tr><td class="label-cell">Both</td>
+              <td>Interpreting the results and the sitting/standing error analysis, the limitations and conclusions,
+                keeping the website in line with the final notebook, and the README and reproduction steps.</td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <h3>References</h3>
+          <ol class="ref-list">
+            <li>D. Anguita, A. Ghio, L. Oneto, X. Parra, J. L. Reyes-Ortiz. <em>A Public Domain Dataset for Human
+                Activity Recognition Using Smartphones.</em> ESANN 2013.</li>
+            <li>F. Pedregosa et al. <em>Scikit-learn: Machine Learning in Python.</em> JMLR 12, 2011.</li>
+            <li>L. Breiman. <em>Random Forests.</em> Machine Learning 45(1), 2001.</li>
+            <li>C. Cortes, V. Vapnik. <em>Support-vector networks.</em> Machine Learning 20(3), 1995.</li>
+          </ol>
+          <p class="card-sub" style="margin-top:0.8rem;margin-bottom:0"><strong>3D character:</strong> "Ch03" character and animations from
+            Adobe Mixamo, rendered with a small WebGL script written for this site.</p>
+          <p class="card-sub" style="margin-top:1rem;margin-bottom:0"><strong>AI tools disclosure:</strong>
+            <strong>Gemini:</strong> drafting the initial code structure and a basic version of the website.
+            <strong>Claude:</strong> reviewing the project against the rubric; the error analysis; the 3D figure in
+            the demo; rebuilding the website interactions; and editing the website text and README, including
+            improving the English of the team and "key decisions" sections from our own notes.
+            We checked every number against the notebook, re-ran the full analysis, and take responsibility for
+            every result on this page.</p>
+        </div>
+      </div>
+
+      <div class="card" id="team" style="margin-top:1.5rem;">
+        <h3>Key decisions, explained by the person who made them</h3>
+        <p class="card-sub">For each of us: one main choice and why we made it, how we checked it, one limitation, and
+          what happens if you change one small thing. Every number here comes from <code>analysis.ipynb</code>.</p>
+        <div class="card-grid two-col">
+          <div class="defense-col">
+            <h4>Bhanavath Charan Tej Naik <span class="muted-small">25110073</span></h4>
+            <table class="info-table defense-table">
+              <tr><td class="label-cell">My main choice</td>
+                <td><strong>Validate by person, not by window.</strong> Our first notebook used
+                  <code>StratifiedKFold(shuffle=True)</code> on windows. Windows overlap by 50% and each person gives
+                  281–409 of them, so a shuffled split puts almost identical windows from the same person into both
+                  training and validation. The model is then tested on people it has already seen, which is not our
+                  question. I switched to <code>GroupKFold</code> with 5 folds by person, so every validation fold
+                  holds 4–5 people the model never trained on.</td></tr>
+              <tr><td class="label-cell">How I checked it</td>
+                <td>I scored the same tuned models both ways. For logistic regression, shuffled K-fold gives 0.984
+                  macro-F1 and grouped K-fold gives 0.934. The real test score on 9 new people is 0.950, much closer
+                  to the grouped number, so the grouped split is the honest one. The shuffled split overstated scores
+                  by 5–8 points for every model we checked. We picked the final model by the grouped CV score, before
+                  looking at the test set.</td></tr>
+              <tr><td class="label-cell">A limitation</td>
+                <td>With only 21 training people, each fold has just 4–5 people, and the score moves by about ±0.04
+                  from fold to fold. The top two models differ by only 0.002 in CV (0.934 vs. 0.932), so CV cannot
+                  really say which is better. We picked logistic regression but treat the two as a tie.</td></tr>
+              <tr><td class="label-cell">A small change</td>
+                <td><strong>What if we change C from 0.1 to 1?</strong> CV macro-F1 goes from 0.9339 to 0.9334:
+                  almost nothing. Across all four C values it moves by less than 0.01, and across all nine SVM settings
+                  by about 0.02. But changing <em>which people</em> are held out moves the score by 0.08–0.13, and one
+                  fold (people 14, 15, 19, 25) is the hardest for every model. So who you test on matters far more
+                  than the exact setting, and more tuning would not help much.</td></tr>
+            </table>
+          </div>
+          <div class="defense-col">
+            <h4>Prashant <span class="muted-small">25110245</span></h4>
+            <table class="info-table defense-table">
+              <tr><td class="label-cell">My main choice</td>
+                <td><strong>Measure uncertainty by resampling people, not windows.</strong> Windows from the same
+                  person are strongly related, so treating the 2,947 test windows as independent would make the
+                  result look far more certain than it is. I resampled the 9 test people with replacement 2,000
+                  times and recomputed macro-F1 each time. For logistic regression this gives 0.950, with a 95%
+                  interval of 0.915–0.976.</td></tr>
+              <tr><td class="label-cell">How I checked it</td>
+                <td>On the test people the SVM scored 0.956 and logistic regression 0.950. Switching to the SVM
+                  because of that would mean using the test set to choose a model. Instead I compared the two on the
+                  same bootstrap samples: logistic regression minus SVM is −0.006, with an interval of [−0.021,
+                  +0.003]. That includes zero, so the test data cannot separate them, and we kept the model chosen by
+                  CV. For the demo, I redid the browser's maths in NumPy, and it gives the same prediction as
+                  scikit-learn on 100% of test windows.</td></tr>
+              <tr><td class="label-cell">A limitation</td>
+                <td>We have only 9 test people, and they differ a lot: macro-F1 is 0.834 for subject 10 and 0.998
+                  for subject 24, and subjects 10 and 9 alone cause 53% of the sitting/standing mix-ups. With so few
+                  people the interval edges are rough. The bootstrap also keeps the trained model fixed, so it
+                  ignores how much the result depends on which people we trained on.</td></tr>
+              <tr><td class="label-cell">A small change</td>
+                <td><strong>What if only the phone's tilt changes?</strong> In the demo, start from a typical
+                  standing window (gravity Y = −0.18) and raise only gravity Y. At about −0.05 the prediction flips
+                  to sitting. This matches the error analysis: the wrongly classified sitting windows have
+                  standing-like values on the closely related <code>tGravityAcc-max()-Y</code>. A second change:
+                  cutting the model from 561 features to these 8 drops test macro-F1 from 0.950 to 0.842, so a few
+                  meaningful features get most of the way, but the rest still add about 0.11.</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 REPRODUCE -->
+  <section class="section section-alt" id="reproduce">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-badge">10</span>
+        <h2 class="section-title">Reproduction</h2>
+      </div>
+      <div class="card">
+        <h3>Steps</h3>
+        <div class="code-block">
+          <pre><code># 1. Get the code
+git clone https://github.com/prashantjangir-git-hub/Human-Activity-Recognition-ML-project-.git
+cd Human-Activity-Recognition-ML-project-
+
+# 2. Install dependencies (Python 3.11+; tested with 3.13 and 3.14, identical results)
+pip install -r requirements.txt
+
+# 3. Download the data from https://archive.ics.uci.edu/dataset/240
+#    and unzip it into the repo so that "UCI HAR Dataset/" sits next to analysis.ipynb
+
+# 4. Run the whole notebook (about 6-7 minutes; grid search dominates)
+jupyter nbconvert --to notebook --execute --inplace analysis.ipynb
+#    -> writes figures and tables (incl. grid_search_results.csv) to results/
+#       and the website data to docs/data/
+
+# 5. View the website: open docs/index.html in a browser</code></pre>
+        </div>
+        <p class="card-sub" style="margin-top:1rem;margin-bottom:0"><strong>Split:</strong> the dataset's own subject split. Train
+          people 1, 3, 5, 6, 7, 8, 11, 14, 15, 16, 17, 19, 21, 22, 23, 25, 26, 27, 28, 29, 30; test people 2, 4, 9, 10, 12,
+          13, 18, 20, 24. <strong>CV:</strong> GroupKFold, 5 folds, by person. <strong>Seed:</strong> 42.</p>
+      </div>
+
+      <p class="card-sub" style="margin-top:1rem;margin-bottom:0">Code: <a href="https://github.com/prashantjangir-git-hub/Human-Activity-Recognition-ML-project-">github.com/prashantjangir-git-hub/Human-Activity-Recognition-ML-project-</a>
+        · data: <a href="https://archive.ics.uci.edu/dataset/240">UCI HAR Dataset</a> (not stored in the repo).</p>
+    </div>
+  </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>ES 335 Machine Learning · 2026 · UCI Human Activity Recognition dataset · Static site: HTML, CSS, JavaScript</p>
+  </footer>
+
+  <a href="#top" class="to-top" id="toTop" aria-label="Back to top">
+    <svg viewBox="0 0 42 42" aria-hidden="true"><circle class="tt-track" cx="21" cy="21" r="20"/><circle class="tt-prog" id="ttProg" cx="21" cy="21" r="20"/></svg>
+    <span aria-hidden="true">↑</span>
+  </a>
+
+  <script src="data/data.js"></script>
+  <!-- data/character.js (the 3D figure, ~700 KB) is loaded by main.js only when the demo comes near -->
+  <script src="js/figure3d.js"></script>
+  <script src="js/main.js"></script>
+</body>
+
+</html>
