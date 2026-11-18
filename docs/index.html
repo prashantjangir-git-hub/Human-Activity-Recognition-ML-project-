@@ -35,7 +35,8 @@
       document.documentElement.setAttribute("data-theme", t);
     })();
   </script>
-  <link rel="stylesheet" href="css/style.css" />
+  <!-- ?v=… makes browsers fetch the new file after an update; change it whenever you push CSS/JS changes -->
+  <link rel="stylesheet" href="css/style.css?v=2026-11-19" />
 </head>
 
 <body>
@@ -747,10 +748,10 @@ jupyter nbconvert --to notebook --execute --inplace analysis.ipynb
     <span aria-hidden="true">↑</span>
   </a>
 
-  <script src="data/data.js"></script>
+  <script src="data/data.js?v=2026-11-19"></script>
   <!-- data/character.js (the 3D figure, ~700 KB) is loaded by main.js only when the demo comes near -->
-  <script src="js/figure3d.js"></script>
-  <script src="js/main.js"></script>
+  <script src="js/figure3d.js?v=2026-11-19"></script>
+  <script src="js/main.js?v=2026-11-19"></script>
 </body>
 
 </html>
