@@ -38,10 +38,13 @@ function barRows(el, rows, { max, fmt = v => v, labelWidth = 150 } = {}) {
 
 /* ── Navbar, counters, scroll reveal, back-to-top ── */
 function initChrome() {
+  initSmoothScroll();
   initScrollSpy($("navLinks"));
   initTheme();
   initDial();
   initToTop();
+  initTableHints();
+  initHeroScroll();
 
   // stat counters: count up with an ease-out curve when they come into view
   const counterObs = new IntersectionObserver(entries => {
@@ -61,20 +64,31 @@ function initChrome() {
   }, { threshold: 0.5 });
   document.querySelectorAll("[data-target]").forEach(el => counterObs.observe(el));
 
-  // cards rise out of the surface as they scroll in; cards side by side are staggered a little
+  // cards rise out of the surface as they scroll in; cards side by side are staggered a little.
+  // The reveal starts a little BEFORE a card enters the screen and is quick, so fast scrolling or a
+  // jump from the menu never shows an empty page.
+  const revealables = [...document.querySelectorAll(".card, .stat-card")];
+  const reveal = el => {
+    if (el.classList.contains("visible")) return;
+    el.classList.add("visible"); fadeObs.unobserve(el);
+    setTimeout(() => el.style.removeProperty("--d"), 900);    // later hover/theme changes start without delay
+  };
   const fadeObs = new IntersectionObserver(entries => {
     for (const e of entries) {
       if (!e.isIntersecting) continue;
-      const el = e.target;
-      el.classList.add("visible"); fadeObs.unobserve(el);
-      setTimeout(() => el.style.removeProperty("--d"), 1600);   // later hover/theme changes start without delay
+      // also show everything above it, in case a fast scroll or a jump skipped past those cards
+      const i = revealables.indexOf(e.target);
+      for (let k = 0; k <= i; k++) reveal(revealables[k]);
     }
-  }, { threshold: 0.08, rootMargin: "0px 0px -40px 0px" });
-  document.querySelectorAll(".card, .stat-card").forEach(el => {
+  }, { threshold: 0, rootMargin: "0px 0px 15% 0px" });
+  revealables.forEach(el => {
     const sibs = [...el.parentElement.children].filter(c => c.classList.contains("card") || c.classList.contains("stat-card"));
-    el.style.setProperty("--d", `${Math.min(sibs.indexOf(el), 4) * 80}ms`);
+    el.style.setProperty("--d", `${Math.min(sibs.indexOf(el), 3) * 50}ms`);
     el.classList.add("animate-on-scroll"); fadeObs.observe(el);
   });
+  // a menu link (or a shared #link) shows its section at once instead of waiting for the scroll to arrive
+  window.revealSection = sec => sec?.querySelectorAll(".animate-on-scroll").forEach(el => { el.style.removeProperty("--d"); reveal(el); });
+  if (location.hash) revealSection(document.getElementById(location.hash.slice(1)));
 }
 
 /* ── Light / dark theme ── */
@@ -173,14 +187,132 @@ function initDial() {
     requestAnimationFrame(frame);
   };
   readCols(); size(); label(order[0]);
-  if (REDUCE) {                       // one still frame
-    for (let i = 0; i < buf.n; i++) { phase += 0.18; for (let a = 0; a < 3; a++) buf[a].push(sample(a)); }
-    draw();
-  } else {
+  // start with a trace that already fills the dial, so the hero never shows an empty circle
+  for (let i = 0; i < buf.n; i++) { phase += 0.18; for (let a = 0; a < 3; a++) buf[a].push(sample(a)); }
+  draw();
+  if (!REDUCE) {
     new IntersectionObserver(es => { visible = es[0].isIntersecting; if (visible && !running) { running = true; last = performance.now(); requestAnimationFrame(frame); } }).observe(c);
   }
-  window.addEventListener("resize", () => { size(); if (REDUCE) draw(); });
+  window.addEventListener("resize", () => {
+    size();
+    for (let a = 0; a < 3; a++) while (buf[a].length < buf.n) buf[a].unshift(buf[a][0] ?? cur.off[a]);   // keep it full when it grows
+    if (REDUCE) draw();
+  });
   window.addEventListener("themechange", () => { readCols(); draw(); });
+}
+
+/* ── Smooth (inertial) scrolling, like the Lenis library used on many 3D sites ──
+   Each mouse-wheel step moves a target position, and the page glides toward it every frame and eases to a
+   stop. The page's real scroll position is used throughout, so the sticky bar, reveals and section highlight
+   keep working. In-page links (menu, "Read the project", back-to-top) glide there with an ease-out curve.
+   Left alone: touch screens (they already have momentum), pinch/ctrl-zoom, sideways scrolling, boxes that
+   scroll on their own, the keyboard and the scrollbar, and visitors who ask for reduced motion. */
+function initSmoothScroll() {
+  const S = window.SMOOTH = { active: false, animating: false, scrollTo: y => window.scrollTo(0, y) };
+  if (REDUCE || !matchMedia("(pointer: fine)").matches) return;
+  S.active = true;
+  document.documentElement.classList.add("smooth-js");
+  const EASE = 0.09;                               // share of the remaining distance covered per 60 fps frame
+  let target = scrollY, cur = scrollY, mode = null, tween = null, last = 0, setY = scrollY;
+  const maxY = () => document.documentElement.scrollHeight - innerHeight;
+  const clamp = y => Math.max(0, Math.min(maxY(), y));
+  const stop = () => { S.animating = false; mode = null; target = cur = scrollY; };
+  const frame = now => {
+    if (!S.animating) return;
+    // someone else moved the page (scrollbar drag, find-in-page, …): let go
+    if (Math.abs(scrollY - setY) > 3) { stop(); return; }
+    const dt = Math.min(64, now - last) / (1000 / 60); last = now;
+    let done = false;
+    if (mode === "lerp") {
+      cur += (target - cur) * (1 - Math.pow(1 - EASE, dt));
+      if (Math.abs(target - cur) < 0.4) { cur = target; done = true; }
+    } else {
+      const u = Math.min(1, (now - tween.t0) / tween.dur);
+      cur = tween.from + (tween.to - tween.from) * (u >= 1 ? 1 : 1 - Math.pow(2, -10 * u));   // ease-out expo
+      target = cur; done = u >= 1;
+    }
+    window.scrollTo(0, cur); setY = scrollY;
+    if (done) { S.animating = false; mode = null; dispatchEvent(new Event("smoothscrollend")); return; }
+    requestAnimationFrame(frame);
+  };
+  const run = m => {
+    mode = m;
+    if (!S.animating) { S.animating = true; last = performance.now(); setY = scrollY; requestAnimationFrame(frame); }
+  };
+  // does an element under the pointer want this wheel step (its own scroll box, e.g. the open phone menu)?
+  const innerScroller = (el, dy) => {
+    for (let n = el instanceof Element ? el : el?.parentElement; n && n !== document.body && n !== document.documentElement; n = n.parentElement) {
+      const oy = getComputedStyle(n).overflowY;
+      if ((oy === "auto" || oy === "scroll") && n.scrollHeight > n.clientHeight + 1 &&
+          (dy > 0 ? n.scrollTop + n.clientHeight < n.scrollHeight - 1 : n.scrollTop > 0)) return true;
+    }
+    return false;
+  };
+  addEventListener("wheel", e => {
+    if (e.ctrlKey || e.defaultPrevented || e.shiftKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+    const dy = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? innerHeight : 1);
+    if (!dy || innerScroller(e.target, dy)) return;
+    e.preventDefault();
+    if (!S.animating) target = cur = scrollY;
+    else if (mode === "tween") target = cur;      // a wheel step takes over from a link glide
+    target = clamp(target + dy);
+    run("lerp");
+  }, { passive: false });
+  addEventListener("keydown", e => { if (S.animating && !e.metaKey && !e.ctrlKey) stop(); });
+  addEventListener("resize", () => { target = clamp(target); });
+  S.scrollTo = (y, duration) => {
+    y = clamp(y);
+    const dist = Math.abs(y - scrollY);
+    if (dist < 1) { dispatchEvent(new Event("smoothscrollend")); return; }
+    tween = { from: scrollY, to: y, t0: performance.now(), dur: duration ?? Math.min(1400, 600 + dist * 0.08) };
+    cur = scrollY; run("tween");
+  };
+  // in-page links glide to their target (the skip link stays instant, for keyboard users)
+  document.addEventListener("click", e => {
+    if (e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    const a = e.target.closest?.('a[href^="#"]');
+    if (!a || a.classList.contains("skip-link")) return;
+    const id = decodeURIComponent(a.getAttribute("href").slice(1)), el = id && document.getElementById(id);
+    if (!el) return;
+    e.preventDefault();
+    const margin = parseFloat(getComputedStyle(el).scrollMarginTop) || 0;
+    S.scrollTo(el.getBoundingClientRect().top + scrollY - margin);
+    if (location.hash !== "#" + id) history.pushState(null, "", "#" + id);
+  });
+}
+
+/* ── Hero: a smooth scroll-linked animation. --hp eases toward how far the hero has scrolled out of view
+   (0 at the top, 1 once it is gone), so the motion glides instead of jumping with each wheel step. ── */
+function initHeroScroll() {
+  const hero = $("top"); if (!hero || REDUCE) return;
+  let cur = 0, target = 0, running = false;
+  const measure = () => { target = Math.min(1, Math.max(0, scrollY / (hero.offsetHeight * 0.85))); };
+  const step = () => {
+    cur += (target - cur) * (window.SMOOTH?.active ? 0.3 : 0.14);   // the page scroll is already eased
+    if (Math.abs(target - cur) < 0.001) cur = target;
+    hero.style.setProperty("--hp", cur.toFixed(4));
+    if (cur !== target) requestAnimationFrame(step); else running = false;
+  };
+  const kick = () => { measure(); if (!running) { running = true; requestAnimationFrame(step); } };
+  addEventListener("scroll", kick, { passive: true });
+  addEventListener("resize", kick);
+  measure(); cur = target; hero.style.setProperty("--hp", cur.toFixed(4));
+}
+
+/* ── Wide tables: fade the cut-off edge and show a "swipe" hint while columns are hidden ── */
+function initTableHints() {
+  document.querySelectorAll(".table-wrap").forEach(wrap => {
+    const hint = wrap.previousElementSibling?.classList.contains("scroll-hint") ? wrap.previousElementSibling : null;
+    const update = () => {
+      const overflow = wrap.scrollWidth > wrap.clientWidth + 2;
+      wrap.classList.toggle("more-right", overflow && wrap.scrollLeft + wrap.clientWidth < wrap.scrollWidth - 4);
+      if (hint) hint.hidden = !overflow;
+    };
+    wrap.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    new ResizeObserver(update).observe(wrap.querySelector("table") || wrap);
+    update();
+  });
 }
 
 /* ── Back-to-top button with a reading-progress ring ── */
@@ -202,8 +334,24 @@ function initScrollSpy(links) {
   const navLinks = [...links.querySelectorAll("a.nav-a")], ind = $("navInd");
   const items = navLinks.map(a => ({ a, sec: document.getElementById(a.getAttribute("href").slice(1)) })).filter(x => x.sec);
   let current = null, lockUntil = 0, ticking = false;
+  const nav = $("navbar"), menuBtn = $("navMenuBtn"), curLabel = $("navCurrent");
+  const sectionName = a => {                     // "06 Results" for the small-screen menu button
+    const sec = document.getElementById(a.getAttribute("href").slice(1));
+    const num = sec?.querySelector(".section-badge")?.textContent.trim();
+    const title = sec?.querySelector(".section-title")?.textContent.trim() || a.textContent.trim();
+    return num ? `<span class="num">${esc(num)}</span>${esc(title)}` : esc(title);
+  };
+  const setMenu = open => {
+    nav.classList.toggle("open", open);
+    menuBtn.setAttribute("aria-expanded", String(open));
+  };
+  if (menuBtn) {
+    menuBtn.addEventListener("click", () => setMenu(!nav.classList.contains("open")));
+    document.addEventListener("keydown", e => { if (e.key === "Escape" && nav.classList.contains("open")) { setMenu(false); menuBtn.focus(); } });
+    document.addEventListener("click", e => { if (nav.classList.contains("open") && !nav.contains(e.target)) setMenu(false); });
+  }
   const moveInd = () => {                       // the pressed-in pill slides under the active link
-    if (!ind) return;
+    if (!ind || getComputedStyle(ind).display === "none") return;
     if (!current) { ind.style.opacity = "0"; return; }
     ind.style.width = `${current.offsetWidth}px`; ind.style.height = `${current.offsetHeight}px`;
     ind.style.transform = `translate(${current.offsetLeft}px, ${current.offsetTop}px)`;
@@ -216,6 +364,7 @@ function initScrollSpy(links) {
     current?.classList.remove("active"); current?.removeAttribute("aria-current");
     current = a;
     if (a) { a.classList.add("active"); a.setAttribute("aria-current", "true"); }
+    if (curLabel) curLabel.innerHTML = a ? sectionName(a) : "Sections";
     moveInd();
   };
   window.addEventListener("resize", moveInd);
@@ -223,7 +372,9 @@ function initScrollSpy(links) {
   const update = () => {
     ticking = false;
     if (Date.now() < lockUntil) return;          // a click is still smooth-scrolling to its target
-    const y = window.scrollY + 90;                // just below the sticky header
+    // a section counts as "current" once its top passes 40% of the way down the screen, so the
+    // highlight switches as the new heading comes into view rather than after it has scrolled away
+    const y = window.scrollY + Math.max(120, window.innerHeight * 0.4);
     const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
     let found = null;
     for (const it of items) if (it.sec.offsetTop <= y) found = it.a;
@@ -231,10 +382,14 @@ function initScrollSpy(links) {
   };
   window.addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
   window.addEventListener("resize", update);
-  window.addEventListener("scrollend", () => { lockUntil = 0; update(); });
+  const ended = () => { if (window.SMOOTH?.animating) return; lockUntil = 0; update(); };
+  window.addEventListener("scrollend", ended);
+  window.addEventListener("smoothscrollend", ended);
   navLinks.forEach(a => a.addEventListener("click", () => {
+    if (menuBtn) setMenu(false);
+    window.revealSection?.(document.getElementById(a.getAttribute("href").slice(1)));
     setActive(a);                                 // highlight the clicked link right away
-    lockUntil = Date.now() + 1200;                // don't flicker through the sections passed on the way
+    lockUntil = Date.now() + 1700;                // don't flicker through the sections passed on the way
     if (REDUCE) return;
     a.classList.remove("nav-pop"); void a.offsetWidth; a.classList.add("nav-pop");
     // once the page stops scrolling, the section's number badge presses in to show where you landed
@@ -242,13 +397,13 @@ function initScrollSpy(links) {
     if (!head) return;
     let done = false;
     const land = () => {
-      if (done) return; done = true;
-      removeEventListener("scrollend", land);
+      if (done || window.SMOOTH?.animating) return; done = true;
+      removeEventListener("scrollend", land); removeEventListener("smoothscrollend", land);
       const badge = head.querySelector(".section-badge");
       for (const el of [head, badge]) { el.classList.remove("arrive"); void el.offsetWidth; el.classList.add("arrive"); }
     };
-    addEventListener("scrollend", land);
-    setTimeout(land, 1600);                       // fallback: no "scrollend" support, or no scroll needed
+    addEventListener("scrollend", land); addEventListener("smoothscrollend", land);
+    setTimeout(land, 1900);                       // fallback: no "scrollend" support, or no scroll needed
   }));
   update();
 }
@@ -307,6 +462,16 @@ function renderLeak(rows) {
 }
 
 /* ── Results table ── */
+const CI_LO = 0.8, CI_HI = 1.0;                  // every interval bar uses this same scale
+const ciPos = v => Math.max(0, Math.min(1, (v - CI_LO) / (CI_HI - CI_LO))) * 100;
+function ciCell(r) {
+  const lo = r["CI low"], hi = r["CI high"], est = r["Test Macro-F1"];
+  const txt = `<span class="muted-small">${f3(lo)}–${f3(hi)}</span>`;
+  if (hi < CI_LO) return `<div class="ci-off">← far below the 0.80–1.00 scale</div>${txt}`;
+  return `<div class="ci" title="95% interval ${f3(lo)}–${f3(hi)}, estimate ${f3(est)} (scale ${CI_LO.toFixed(2)}–${CI_HI.toFixed(2)})">
+      <div class="ci-bar" style="left:${ciPos(lo)}%;width:${ciPos(hi) - ciPos(lo)}%"></div>
+      <div class="ci-dot" style="left:${ciPos(est)}%"></div></div>${txt}`;
+}
 function renderResults(rows, dm) {
   const sel = rows.find(r => r.Selected);
   $("resultsTableBody").innerHTML = rows.map(r => `
@@ -314,9 +479,7 @@ function renderResults(rows, dm) {
       <td>${esc(r.Model)}${r.Selected ? ' <span class="tag-selected">selected by CV</span>' : ""}</td>
       <td>${f3(r["CV Macro-F1 (mean)"])} <span class="muted-small">± ${f3(r["CV Macro-F1 (std)"])}</span></td>
       <td><strong>${f3(r["Test Macro-F1"])}</strong></td>
-      <td><div class="ci"><div class="ci-bar" style="left:${r["CI low"] * 100}%;width:${(r["CI high"] - r["CI low"]) * 100}%"></div>
-          <div class="ci-dot" style="left:${r["Test Macro-F1"] * 100}%"></div></div>
-          <span class="muted-small">${f3(r["CI low"])}–${f3(r["CI high"])}</span></td>
+      <td>${ciCell(r)}</td>
       <td>${f3(r["Test Accuracy"])}</td>
       <td>${f3(r["Train Macro-F1"])}</td>
     </tr>`).join("");
@@ -422,12 +585,12 @@ function renderSubjects(ps) {
   const errs = Object.fromEntries(ps.errors.map(r => [r.subject, r]));
   const totalSS = ps.errors.reduce((a, r) => a + r.sit_stand, 0);
   $("subjChart").innerHTML = ps.rows.map(r => {
-    const h = Math.max(4, (r["Macro-F1"] - 0.75) / 0.25 * 100);
+    const h = Math.max(2, r["Macro-F1"] * 100);    // bars start at 0, so heights are honest
     return `<button class="subj-bar" data-s="${r.Subject}" title="Subject ${r.Subject}: ${f3(r["Macro-F1"])}">
       <span class="subj-val">${r["Macro-F1"].toFixed(2)}</span>
       <span class="subj-fill" style="height:${h}%;background:${r["Macro-F1"] < 0.9 ? "#dc2626" : "#2563eb"}"></span>
       <span class="subj-id">${r.Subject}</span></button>`;
-  }).join("") + `<p class="axis-note" style="grid-column:1/-1">Test person ID · bars start at 0.75</p>`;
+  }).join("") + `<p class="axis-note" style="grid-column:1/-1">Test person ID · bars start at 0 · red = macro-F1 below 0.90</p>`;
   $("subjChart").querySelectorAll(".subj-bar").forEach(b => b.addEventListener("click", () => {
     $("subjChart").querySelectorAll(".subj-bar").forEach(x => x.classList.toggle("selected", x === b));
     const r = ps.rows.find(x => x.Subject === +b.dataset.s), e = errs[r.Subject];
@@ -546,11 +709,31 @@ function limbSVG(id, l1, l2, back, isLeg) {
 function initFigure() {
   const stage = $("figureStage");
   if (!stage) return;
-  // Prefer the 3D stick-man model; fall back to the 2D drawing if WebGL or the model is unavailable
-  if (window.HARFigure3D && HARFigure3D.available()) {
-    try { FIG.three = HARFigure3D.create(stage); } catch (e) { console.warn("3D figure unavailable:", e); FIG.three = null; }
-    if (FIG.three) return;
-  }
+  // The 3D character (data/character.js, ~700 KB) is only downloaded when the demo is about to come into
+  // view, so it does not slow down the first screen. Until then a placeholder holds the space; if WebGL
+  // or the download fails, the 2D drawing is used instead.
+  if (!window.WebGLRenderingContext || !window.HARFigure3D) { draw2DFigure(stage); return; }
+  stage.innerHTML = `<div class="fig-placeholder">loading 3D figure…</div>`;
+  const mount3D = () => {
+    if (HARFigure3D.available()) {
+      try { FIG.three = HARFigure3D.create(stage); } catch (e) { console.warn("3D figure unavailable:", e); FIG.three = null; }
+    }
+    if (!FIG.three) draw2DFigure(stage);
+    if (FIG.pending) setFigure(...FIG.pending);
+  };
+  if (window.HAR_CHARACTER) { mount3D(); return; }
+  const obs = new IntersectionObserver(es => {
+    if (!es.some(e => e.isIntersecting)) return;
+    obs.disconnect();
+    const s = document.createElement("script");
+    s.src = "data/character.js";
+    s.onload = mount3D;
+    s.onerror = () => { draw2DFigure(stage); if (FIG.pending) setFigure(...FIG.pending); };
+    document.body.appendChild(s);
+  }, { rootMargin: "800px 0px" });
+  obs.observe(stage);
+}
+function draw2DFigure(stage) {
   const headY = -LEN.T - LEN.HEAD - 2;
   stage.innerHTML = `
   <svg viewBox="0 0 300 220" id="figSvg" role="img" aria-label="Cartoon figure acting out the prediction">
@@ -646,10 +829,12 @@ function figLoop(now) {
   requestAnimationFrame(figLoop);
 }
 function setFigure(pred, conf, second) {
+  FIG.pending = [pred, conf, second];          // remembered so a figure that loads later starts in the right pose
   const unsure3 = conf < 0.6;
   const caption = unsure3 ? `Unsure: ${NICE[pred]} ${(conf * 100).toFixed(0)}% vs ${NICE[second]}`
                           : `Acting out: ${NICE[pred]} (${(conf * 100).toFixed(0)}% sure)`;
-  if (FIG.three) { FIG.three.set(pred, conf, second, COLOR[pred], NICE); $("figureCaption").textContent = caption; return; }
+  $("figureCaption").textContent = caption;
+  if (FIG.three) { FIG.three.set(pred, conf, second, COLOR[pred], NICE); return; }
   if (!FIG.el.figRoot) return;
   if (pred !== FIG.pred) FIG.changedAt = performance.now();
   FIG.pred = pred; FIG.conf = conf;
