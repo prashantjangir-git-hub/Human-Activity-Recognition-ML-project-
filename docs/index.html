@@ -14,6 +14,18 @@
     rel="stylesheet" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22%3E%3Crect width=%2216%22 height=%2216%22 rx=%223%22 fill=%22%232563eb%22/%3E%3C/svg%3E" />
   <meta name="color-scheme" content="light dark" />
+  <link rel="canonical" href="https://prashantjangir-git-hub.github.io/Human-Activity-Recognition-ML-project-/" />
+  <!-- link previews (LinkedIn, WhatsApp, Slack, X, …) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Human Activity Recognition · ES 335 ML Project" />
+  <meta property="og:description"
+    content="Classifying six activities of unseen people from 2.56 s of phone sensor data (UCI HAR): test macro-F1 0.950 on 9 held-out people, with an interactive confusion matrix and an in-browser demo." />
+  <meta property="og:url" content="https://prashantjangir-git-hub.github.io/Human-Activity-Recognition-ML-project-/" />
+  <meta property="og:image" content="https://prashantjangir-git-hub.github.io/Human-Activity-Recognition-ML-project-/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Human Activity Recognition: test macro-F1 0.950 on 9 unseen people" />
+  <meta name="twitter:card" content="summary_large_image" />
   <script>
     /* Pick the theme before the page paints, so there is no flash: saved choice, else the system setting. */
     (function () {
@@ -28,9 +40,16 @@
 
 <body>
 
-  <nav class="navbar" id="navbar">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <nav class="navbar" id="navbar" aria-label="Sections">
     <div class="nav-inner">
-      <ul class="nav-links" id="navLinks" aria-label="Sections">
+      <!-- small screens: the links fold into a menu; this button shows the current section -->
+      <button class="nav-menu-btn" id="navMenuBtn" type="button" aria-expanded="false" aria-controls="navLinks">
+        <span class="nav-burger" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span class="nav-current" id="navCurrent">Sections</span>
+      </button>
+      <ul class="nav-links" id="navLinks">
         <li><a href="#question" class="nav-a">Question</a></li>
         <li><a href="#data" class="nav-a">Data</a></li>
         <li><a href="#preprocessing" class="nav-a">Preprocessing</a></li>
@@ -60,12 +79,19 @@
     exists; re-running <code>analysis.ipynb</code> recreates it.
   </div>
 
+  <main id="main" tabindex="-1">
+
   <!-- HERO -->
   <header class="hero" id="top">
     <div class="container hero-grid">
       <div class="hero-content">
         <p class="hero-eyebrow">ES 335 · Machine Learning · 2026</p>
-        <h1 class="hero-title">Human Activity <span class="gradient-text">Recognition</span></h1>
+        <!-- neumorphic heading: each word is raised out of the page; it sinks back in as you scroll away -->
+        <h1 class="hero-title" aria-label="Human Activity Recognition">
+          <span class="ht-word" style="--i:0" aria-hidden="true">Human</span>
+          <span class="ht-word" style="--i:1" aria-hidden="true">Activity</span>
+          <span class="ht-word ht-accent" style="--i:2" aria-hidden="true">Recognition</span>
+        </h1>
         <p class="hero-sub">Can 2.56 seconds of phone sensor data tell what a <em>new</em> person is doing? We train
           classical models on the UCI HAR dataset and test them on 9 people the models never saw.</p>
         <div class="hero-result" id="heroResult">Loading results…</div>
@@ -343,29 +369,36 @@
         <h3>Model comparison</h3>
         <p class="card-sub">CV = person-grouped cross-validation on the 21 training people (used to choose). Test = the
           9 held-out people (reported once). 95% interval from the subject-level bootstrap.</p>
+        <p class="scroll-hint" hidden>Scroll sideways to see every column →</p>
         <div class="table-wrap">
           <table class="results-table">
             <thead>
-              <tr><th>Model</th><th>CV macro-F1</th><th>Test macro-F1</th><th>95% interval</th><th>Test accuracy</th><th>Train macro-F1</th></tr>
+              <tr><th>Model</th><th>CV macro-F1</th><th>Test macro-F1</th><th>95% interval <span class="th-scale">scale 0.80–1.00</span></th><th>Test accuracy</th><th>Train macro-F1</th></tr>
             </thead>
             <tbody id="resultsTableBody"><tr><td colspan="6" class="muted-cell">Loading…</td></tr></tbody>
           </table>
         </div>
         <div class="callout">
-          <strong>Which model is best?</strong> Logistic regression had the highest CV score (0.934 vs. 0.932 for the
-          SVM), so we selected it before testing. That lead is tiny next to the fold-to-fold spread (±0.04), so in
-          CV the two effectively tie. On the test people the SVM scored slightly higher (0.956 vs. 0.950),
-          but resampling the test people shows that gap is not reliable: the LR − SVM difference is −0.006 with a 95%
-          interval of [−0.021, +0.003], which includes zero. We keep logistic regression: it is simpler, faster, and
-          its weights can be read directly. All four full models beat the majority baseline by a wide margin. Against
-          the simple 8-feature baseline, the full logistic regression is clearly better in CV (0.934 vs. 0.880) and on
-          test (0.950 vs. 0.842), so the other 553 features add real information, not just complexity. k-NN, however,
-          does <em>not</em> beat the simple baseline in CV (0.873 vs. 0.880): plain distance over all 561 features
-          carries over poorly to new people.
-          <br><br><strong>What the interval can and cannot tell us:</strong> it shows how much the score depends on
-          which people happen to be tested. It keeps the trained models fixed, so it ignores variation from which
-          people were used for training, and with only 9 people its edges are themselves rough. It is not a formal
-          significance test.
+          <p class="takeaway"><strong>Which model is best?</strong> Logistic regression and the SVM effectively tie.
+            We keep logistic regression: it was chosen by CV before testing, it is simpler and faster, and its weights
+            can be read directly.</p>
+          <ul class="eval-list callout-list">
+            <li><strong>In CV</strong> logistic regression leads the SVM by 0.002 (0.934 vs. 0.932), tiny next to the
+              fold-to-fold spread (±0.04).</li>
+            <li><strong>On test</strong> the SVM scored slightly higher (0.956 vs. 0.950), but resampling the test people
+              gives an LR − SVM difference of −0.006 with a 95% interval of [−0.021, +0.003], which includes zero.</li>
+            <li><strong>Against the baselines</strong> all four full models beat the majority baseline by a wide margin,
+              and full logistic regression clearly beats the simple 8-feature model (CV 0.934 vs. 0.880, test 0.950
+              vs. 0.842), so the other 553 features add real information, not just complexity.</li>
+            <li><strong>k-NN is the exception:</strong> it does <em>not</em> beat the simple baseline in CV (0.873 vs.
+              0.880). Plain distance over all 561 features carries over poorly to new people.</li>
+          </ul>
+          <details class="more">
+            <summary>What the interval can and cannot tell us</summary>
+            <p>It shows how much the score depends on which people happen to be tested. It keeps the trained models
+              fixed, so it ignores variation from which people were used for training, and with only 9 people its
+              edges are themselves rough. It is not a formal significance test.</p>
+          </details>
         </div>
         <p class="card-sub" style="margin-top:0.8rem;margin-bottom:0">Train scores near 1.0 against CV ≈ 0.87–0.93 show every model fits the
           training people much better than new people. The gap looks like <em>person-to-person variation</em> rather than a
@@ -555,10 +588,10 @@
         </ul>
       </div>
 
-      <div class="card-grid two-col" style="margin-top:1.5rem;">
+      <div class="card-grid" style="margin-top:1.5rem;">
         <div class="card">
           <h3>Team &amp; contributions</h3>
-          <table class="info-table">
+          <table class="info-table team-table">
             <tr><td class="label-cell">Bhanavath Charan Tej Naik<br><span class="muted-small">25110073</span></td>
               <td>Chose the question and the dataset, and wrote the proposal. Loaded the data and did the quality
                 checks, the class-balance count and the PCA plot. Built the first comparison of the five models,
@@ -703,6 +736,8 @@ jupyter nbconvert --to notebook --execute --inplace analysis.ipynb
     </div>
   </section>
 
+  </main>
+
   <footer class="footer">
     <p>ES 335 Machine Learning · 2026 · UCI Human Activity Recognition dataset · Static site: HTML, CSS, JavaScript</p>
   </footer>
@@ -713,7 +748,7 @@ jupyter nbconvert --to notebook --execute --inplace analysis.ipynb
   </a>
 
   <script src="data/data.js"></script>
-  <script src="data/character.js"></script>
+  <!-- data/character.js (the 3D figure, ~700 KB) is loaded by main.js only when the demo comes near -->
   <script src="js/figure3d.js"></script>
   <script src="js/main.js"></script>
 </body>
